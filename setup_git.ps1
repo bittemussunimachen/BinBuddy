@@ -36,6 +36,10 @@ Write-Host "Füge Remote Repository hinzu..." -ForegroundColor Green
 git remote remove origin -ErrorAction SilentlyContinue
 git remote add origin https://github.com/bittemussunimachen/BinBuddy.git
 
+Write-Host "Hole Remote-Änderungen..." -ForegroundColor Green
+Write-Host "Hinweis: Das Remote-Repository enthält bereits Inhalte (README.md)." -ForegroundColor Yellow
+git pull origin main --allow-unrelated-histories --no-edit
+
 Write-Host "Pushe zum Remote Repository..." -ForegroundColor Green
 Write-Host "Hinweis: Du musst möglicherweise deine GitHub-Credentials eingeben." -ForegroundColor Yellow
 git push -u origin main

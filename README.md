@@ -1,4 +1,5 @@
 # BinBuddy
+<<<<<<< HEAD
 
 Eine Android-App zur Unterstützung beim deutschen Mülltrennungssystem für internationale Nutzer.
 
@@ -50,3 +51,6 @@ git push -u origin main
 - Target SDK: 36
 - Java 11
 
+=======
+Brd muss machen
+>>>>>>> fd35822c5b95079839fc1601bf6524c28ca93ad4
