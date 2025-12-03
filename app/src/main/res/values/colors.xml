@@ -1,0 +1,15 @@
+<resources>
+    <color name="primary_green">#22C55E</color>
+    <color name="primary_green_dark">#16A34A</color>
+    <color name="blue_accent">#2563EB</color>
+    <color name="orange_accent">#F97316</color>
+    <color name="purple_accent">#A855F7</color>
+
+    <color name="background_light">#F3F4F6</color>
+    <color name="card_background">#FFFFFF</color>
+
+    <color name="text_primary">#111827</color>
+    <color name="text_secondary">#6B7280</color>
+
+    <color name="white">#FFFFFF</color>
+</resources>
