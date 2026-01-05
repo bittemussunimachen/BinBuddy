@@ -19,7 +19,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        
         ndk {
             abiFilters += listOf("armeabi-v7a", "arm64-v8a")
         }
@@ -68,6 +67,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
 
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("com.google.android.material:material:1.12.0")
     
     val cameraxVersion = "1.4.0"
