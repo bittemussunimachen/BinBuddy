@@ -61,11 +61,19 @@ public class ProductSearchActivity extends AppCompatActivity {
         tvEmpty = findViewById(R.id.tvEmpty);
 
         adapter = new ProductAdapter(new ArrayList<>());
-        rvProducts.setLayoutManager(new LinearLayoutManager(this));
-        rvProducts.setAdapter(adapter);
+        if (rvProducts != null) {
+            rvProducts.setLayoutManager(new LinearLayoutManager(this));
+            rvProducts.setAdapter(adapter);
+        } else {
+            Toast.makeText(this, "Listenansicht nicht gefunden", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
 
         Button btnSearch = findViewById(R.id.btnSearch);
-        btnSearch.setOnClickListener(v -> startSearch());
+        if (btnSearch != null) {
+            btnSearch.setOnClickListener(v -> startSearch());
+        }
 
         if (etSearch != null) {
             etSearch.setOnEditorActionListener((v, actionId, event) -> {
@@ -120,7 +128,6 @@ public class ProductSearchActivity extends AppCompatActivity {
         }
 
         HttpURLConnection connection = null;
-        StringBuilder builder = new StringBuilder();
         try {
             URL url = new URL(urlBuilder.toString());
             connection = (HttpURLConnection) url.openConnection();
@@ -128,17 +135,24 @@ public class ProductSearchActivity extends AppCompatActivity {
             connection.setConnectTimeout(8000);
             connection.setReadTimeout(8000);
             int status = connection.getResponseCode();
-            InputStream stream = (status >= 200 && status < 300) ? connection.getInputStream() : connection.getErrorStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line);
+            StringBuilder builder = new StringBuilder();
+            try (InputStream stream = (status >= 200 && status < 300)
+                    ? connection.getInputStream()
+                    : connection.getErrorStream();
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line);
+                }
             }
+            return parseProducts(builder.toString(), germanyOnly);
         } finally {
             if (connection != null) connection.disconnect();
         }
+    }
 
-        JSONObject root = new JSONObject(builder.toString());
+    private List<ProductItem> parseProducts(String rawJson, boolean germanyOnly) throws JSONException {
+        JSONObject root = new JSONObject(rawJson);
         JSONArray products = root.optJSONArray("products");
         List<ProductItem> items = new ArrayList<>();
         if (products == null) return items;
