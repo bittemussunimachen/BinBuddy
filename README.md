@@ -1,56 +1,41 @@
 # BinBuddy
-<<<<<<< HEAD
 
-Eine Android-App zur Unterstützung beim deutschen Mülltrennungssystem für internationale Nutzer.
+Eine Android-App für internationale Nutzer:innen, die bei der deutschen Mülltrennung hilft. Scanne Produkte, suche nach Artikeln, filtere auf Deutschland und erhalte Produkt- und Verpackungsinfos aus der Open Food Facts API.
+
+Kurz gesagt: Scanne oder suche Produkte, bekomme Name/Marke/Kategorien/Verpackung aus Open Food Facts (frei, kein API-Key), optional nur deutsche Produkte anzeigen, einfache UI mit Listenansicht und Scan-Toast.
 
 ## Features
+- Barcode-Scanner mit CameraX + ML Kit
+- Produktsuche (Open Food Facts), optionaler Deutschland-Filter
+- Ergebnisliste mit Name, Marke, Kategorien, Verpackung
+- Einfacher Produkt-Detailtoast nach Scan
+- Material-gestütztes UI (RecyclerView, TextInputLayout, etc.)
 
-- Barcode-Scanner zur Produkterkennung
-- Mülltrennungs-Anleitung
-- Pfand-System Informationen
-- Abfallkalender
-- Kartenfunktion für Container-Standorte
+## Tech Stack
+- Android (Java 11)
+- CameraX, ML Kit Barcode Scanning
+- Open Food Facts (freie API, keine Keys nötig)
+- Material Components, RecyclerView, ConstraintLayout
 
-## Technologie
-
-- Android (Java)
-- Material Design Components
-- CameraX für Kamera-Funktionalität
-- ML Kit Barcode Scanning
-
-## Installation
-
-1. Repository klonen:
-```bash
-git clone https://github.com/bittemussunimachen/BinBuddy.git
-```
-
-2. Projekt in Android Studio öffnen
-
-3. Gradle Sync durchführen
-
-4. App auf Gerät oder Emulator ausführen
-
-## Setup Git Repository
-
-Falls Git noch nicht initialisiert ist, führe folgende Befehle aus:
-
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin https://github.com/bittemussunimachen/BinBuddy.git
-git push -u origin main
-```
-
-## Requirements
-
+## Anforderungen
 - Android Studio
-- Min SDK: 24
-- Target SDK: 36
+- Min SDK: 24, Target SDK: 36
 - Java 11
 
-=======
-Brd muss machen
->>>>>>> fd35822c5b95079839fc1601bf6524c28ca93ad4
+## Projekt aufsetzen
+1. Klonen  
+   ```bash
+   git clone https://github.com/bittemussunimachen/BinBuddy.git
+   ```
+2. In Android Studio öffnen und Gradle Sync ausführen.
+3. App auf Emulator (API 33/34 reicht) oder Gerät starten.
+
+## CLI-Test ohne Android Studio
+Einzelnes Produkt abfragen (Open Food Facts):
+```bash
+python scripts/opengtin_test.py 4009233006847
+```
+
+## Bekannte Hinweise
+- Für Push-Rechte auf das Original-Repo wird GitHub-Zugriff benötigt; sonst in einen Fork pushen.
+- Emulator-Kamera ist begrenzt; für zuverlässiges Scannen besser ein physisches Gerät nutzen.
