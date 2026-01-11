@@ -198,9 +198,13 @@ public class MainActivity extends AppCompatActivity {
             connection.setReadTimeout(8000);
 
             int status = connection.getResponseCode();
-            try (InputStream stream = (status >= 200 && status < 300)
+            InputStream rawStream = (status >= 200 && status < 300)
                     ? connection.getInputStream()
                     : connection.getErrorStream();
+            if (rawStream == null) {
+                rawStream = InputStream.nullInputStream();
+            }
+            try (InputStream stream = rawStream;
                  BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
