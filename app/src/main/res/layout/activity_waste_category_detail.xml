@@ -3,41 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_light">
+    android:background="?attr/colorSurface">
 
-    <LinearLayout
-        android:id="@+id/topBar"
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical"
-        android:background="@color/white"
-        android:elevation="4dp"
+        android:paddingHorizontal="12dp"
+        android:title="@string/category_details"
+        android:titleCentered="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <ImageView
-            android:id="@+id/imageViewBack"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@android:drawable/ic_menu_revert"
-            android:padding="6dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:tint="@color/text_primary" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/category_details"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:gravity="center"
-            android:layout_marginStart="12dp" />
-    </LinearLayout>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:navigationContentDescription="@string/category_details"
+        app:navigationIcon="@android:drawable/ic_menu_revert" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollViewContent"
@@ -45,7 +24,7 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/topBar"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -78,13 +57,12 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginBottom="16dp" />
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/textViewCategoryName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/placeholder_category_name"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
+                        android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
                         android:textColor="@color/white"
                         android:layout_gravity="center_horizontal" />
                 </LinearLayout>
@@ -94,9 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/card_background">
+                app:cardCornerRadius="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -104,22 +80,19 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/description"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_primary"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                         android:layout_marginBottom="12dp" />
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/textViewCategoryDescription"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/placeholder_category_description"
-                        android:textSize="14sp"
-                        android:textColor="@color/text_secondary"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:lineSpacingMultiplier="1.2" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

@@ -13,8 +13,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import com.example.binbuddy.R;
 import com.example.binbuddy.databinding.ActivityPfandInfoBinding;
 import com.example.binbuddy.ui.viewmodel.PfandInfoViewModel;
@@ -75,7 +73,8 @@ public class PfandInfoActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        binding.imageViewBack.setOnClickListener(v -> finish());
+        setSupportActionBar(binding.toolbar);
+        binding.toolbar.setNavigationOnClickListener(v -> finish());
         
         binding.buttonEnableLocation.setOnClickListener(v -> {
             requestLocationPermission();

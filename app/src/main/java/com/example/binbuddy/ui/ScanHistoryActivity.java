@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.binbuddy.R;
 import com.example.binbuddy.domain.model.ScanHistory;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -46,8 +47,9 @@ public class ScanHistoryActivity extends AppCompatActivity {
         rvScanHistory = findViewById(R.id.rvScanHistory);
         emptyState = findViewById(R.id.emptyState);
 
-        View btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> finish());
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(v -> finish());
     }
 
     private void setupRecyclerView() {

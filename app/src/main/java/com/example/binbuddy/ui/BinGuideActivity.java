@@ -77,7 +77,8 @@ public class BinGuideActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        binding.imageViewBack.setOnClickListener(v -> finish());
+        setSupportActionBar(binding.toolbar);
+        binding.toolbar.setNavigationOnClickListener(v -> finish());
     }
 
     private void showCategoryDetails(WasteCategory category) {
