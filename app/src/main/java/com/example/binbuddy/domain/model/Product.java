@@ -14,6 +14,7 @@ public class Product {
     private String labels;
     private String genericName;
     private String imageUrl;
+    private EnvironmentInfo environmentInfo;
 
     public Product() {
     }
@@ -120,5 +121,13 @@ public class Product {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public EnvironmentInfo getEnvironmentInfo() {
+        return environmentInfo;
+    }
+
+    public void setEnvironmentInfo(EnvironmentInfo environmentInfo) {
+        this.environmentInfo = environmentInfo;
     }
 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.binbuddy.domain.model.Product;
+import com.example.binbuddy.domain.model.EnvironmentInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,10 +132,99 @@ public class ProductDetailViewModel extends AndroidViewModel {
             }
         }
 
-        Product product = new Product(barcode, name, brand, categories, packaging, 
+        Product product = new Product(barcode, name, brand, categories, packaging,
                                      quantity, ingredients, labels, generic, imageUrl);
         product.setId(barcode);
+        product.setEnvironmentInfo(parseEnvironmentInfo(productJson));
         return product;
+    }
+
+    private EnvironmentInfo parseEnvironmentInfo(org.json.JSONObject productJson) {
+        EnvironmentInfo info = new EnvironmentInfo();
+
+        info.setEcoScoreGrade(productJson.optString("ecoscore_grade", null));
+        if (productJson.has("ecoscore_score")) {
+            info.setEcoScoreScore(productJson.optInt("ecoscore_score", -1));
+        }
+
+        org.json.JSONObject ecoscoreData = productJson.optJSONObject("ecoscore_data");
+        if (ecoscoreData != null) {
+            org.json.JSONObject agribalyse = ecoscoreData.optJSONObject("agribalyse");
+            if (agribalyse != null && agribalyse.has("co2_total")) {
+                double co2 = agribalyse.optDouble("co2_total", Double.NaN);
+                if (!Double.isNaN(co2)) {
+                    info.setCo2Per100g(co2);
+                }
+            }
+
+            org.json.JSONObject adjustments = ecoscoreData.optJSONObject("adjustments");
+            if (adjustments != null) {
+                org.json.JSONObject packagingAdj = adjustments.optJSONObject("packaging");
+                if (packagingAdj != null) {
+                    info.setPackagingWarning(packagingAdj.optString("warning", null));
+                }
+                org.json.JSONObject threatened = adjustments.optJSONObject("threatened_species");
+                if (threatened != null) {
+                    info.setThreatenedSpeciesIngredient(threatened.optString("ingredient", null));
+                }
+            }
+        }
+
+        org.json.JSONArray packagingMaterials = productJson.optJSONArray("packaging_materials_tags");
+        if (packagingMaterials != null) {
+            for (int i = 0; i < packagingMaterials.length(); i++) {
+                String mat = packagingMaterials.optString(i, "");
+                if (!mat.isEmpty()) {
+                    info.getPackagingMaterials().add(mat.replace("en:", "").replace('-', ' '));
+                }
+            }
+        }
+
+        org.json.JSONArray packagingParts = productJson.optJSONArray("packagings");
+        if (packagingParts != null) {
+            for (int i = 0; i < packagingParts.length(); i++) {
+                org.json.JSONObject part = packagingParts.optJSONObject(i);
+                if (part == null) continue;
+                String material = part.optString("material", part.optString("material_name", ""));
+                String shape = part.optString("shape", part.optString("shape_name", ""));
+                String weight = part.has("weight") ? part.optString("weight") : "";
+
+                StringBuilder builder = new StringBuilder();
+                if (!shape.isEmpty()) {
+                    builder.append(shape);
+                }
+                if (!material.isEmpty()) {
+                    if (builder.length() > 0) builder.append(" · ");
+                    builder.append(material);
+                }
+                if (!weight.isEmpty()) {
+                    if (builder.length() > 0) builder.append(" · ");
+                    builder.append(weight);
+                }
+                String assembled = builder.toString().trim();
+                if (!assembled.isEmpty()) {
+                    info.getPackagingParts().add(assembled);
+                }
+            }
+        }
+
+        org.json.JSONArray analysisTags = productJson.optJSONArray("ingredients_analysis_tags");
+        if (analysisTags != null) {
+            for (int i = 0; i < analysisTags.length(); i++) {
+                String tag = analysisTags.optString(i, "");
+                if ("en:palm-oil".equalsIgnoreCase(tag)) {
+                    info.setContainsPalmOil(true);
+                    break;
+                }
+            }
+        }
+
+        if (info.getThreatenedSpeciesIngredient() != null
+                && info.getThreatenedSpeciesIngredient().toLowerCase(java.util.Locale.ROOT).contains("palm")) {
+            info.setContainsPalmOil(true);
+        }
+
+        return info;
     }
 
     @Override
