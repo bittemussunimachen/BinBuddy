@@ -15,13 +15,17 @@ public class Product {
     private String genericName;
     private String imageUrl;
     private EnvironmentInfo environmentInfo;
+    // Eco/green score data returned by the API
+    private String ecoscoreGrade;
+    private Integer ecoscoreScore;
 
     public Product() {
     }
 
-    public Product(String barcode, String name, String brand, List<String> categories, 
-                   String packaging, String quantity, List<String> ingredients, 
-                   String labels, String genericName, String imageUrl) {
+    public Product(String barcode, String name, String brand, List<String> categories,
+                   String packaging, String quantity, List<String> ingredients,
+                   String labels, String genericName, String imageUrl,
+                   String ecoscoreGrade, Integer ecoscoreScore) {
         this.barcode = barcode;
         this.name = name;
         this.brand = brand;
@@ -32,6 +36,8 @@ public class Product {
         this.labels = labels;
         this.genericName = genericName;
         this.imageUrl = imageUrl;
+        this.ecoscoreGrade = ecoscoreGrade;
+        this.ecoscoreScore = ecoscoreScore;
     }
 
     // Getters and Setters
@@ -129,5 +135,21 @@ public class Product {
 
     public void setEnvironmentInfo(EnvironmentInfo environmentInfo) {
         this.environmentInfo = environmentInfo;
+    }
+
+    public String getEcoscoreGrade() {
+        return ecoscoreGrade;
+    }
+
+    public void setEcoscoreGrade(String ecoscoreGrade) {
+        this.ecoscoreGrade = ecoscoreGrade;
+    }
+
+    public Integer getEcoscoreScore() {
+        return ecoscoreScore;
+    }
+
+    public void setEcoscoreScore(Integer ecoscoreScore) {
+        this.ecoscoreScore = ecoscoreScore;
     }
 }

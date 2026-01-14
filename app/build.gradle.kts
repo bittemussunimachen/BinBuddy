@@ -116,6 +116,7 @@ dependencies {
     // Location Services & Maps
     implementation(libs.play.services.location)
     implementation(libs.play.services.maps)
+    implementation(libs.androidsvg)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

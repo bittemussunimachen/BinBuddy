@@ -122,6 +122,9 @@ public class ProductSearchViewModel extends AndroidViewModel {
             String code = obj.optString("code", "");
             String quantity = obj.optString("quantity", "");
             String imageUrl = obj.optString("image_url", "");
+            String ecoGrade = obj.optString("ecoscore_grade", "");
+            int ecoScoreRaw = obj.optInt("ecoscore_score", -1);
+            Integer ecoScore = ecoScoreRaw >= 0 ? ecoScoreRaw : null;
 
             if (android.text.TextUtils.isEmpty(name)) {
                 continue;
@@ -137,8 +140,9 @@ public class ProductSearchViewModel extends AndroidViewModel {
                 }
             }
 
-            Product product = new Product(code, name, brand, categories, packaging, 
-                                        quantity, new ArrayList<>(), "", "", imageUrl);
+            Product product = new Product(code, name, brand, categories, packaging,
+                                        quantity, new ArrayList<>(), "", "", imageUrl,
+                                        ecoGrade, ecoScore);
             product.setId(code);
             items.add(product);
         }

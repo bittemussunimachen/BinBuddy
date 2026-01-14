@@ -41,6 +41,10 @@
     <string name="product_ingredients">Zutaten</string>
     <string name="waste_category">Müllkategorie</string>
     <string name="pfand_info">Pfand</string>
+    <string name="green_score_title">Green Score</string>
+    <string name="green_score_grade_label">Note %1$s</string>
+    <string name="green_score_score_label">%1$d / 100</string>
+    <string name="green_score_missing">Green Score nicht verfügbar</string>
     <string name="add_to_favorites">Zu Favoriten hinzufügen</string>
     <string name="share">Teilen</string>
     <string name="no_product_data">Keine Produktdaten verfügbar</string>

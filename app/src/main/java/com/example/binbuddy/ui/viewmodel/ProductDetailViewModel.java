@@ -132,8 +132,13 @@ public class ProductDetailViewModel extends AndroidViewModel {
             }
         }
 
+        String ecoGrade = productJson.optString("ecoscore_grade", "");
+        int ecoScoreRaw = productJson.optInt("ecoscore_score", -1);
+        Integer ecoScore = ecoScoreRaw >= 0 ? ecoScoreRaw : null;
+
         Product product = new Product(barcode, name, brand, categories, packaging,
-                                     quantity, ingredients, labels, generic, imageUrl);
+                                     quantity, ingredients, labels, generic, imageUrl,
+                                     ecoGrade, ecoScore);
         product.setId(barcode);
         product.setEnvironmentInfo(parseEnvironmentInfo(productJson));
         return product;

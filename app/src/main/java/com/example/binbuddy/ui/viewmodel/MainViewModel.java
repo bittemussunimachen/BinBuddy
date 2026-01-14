@@ -130,6 +130,9 @@ public class MainViewModel extends AndroidViewModel {
         String generic = productJson.optString("generic_name", "");
         String labels = productJson.optString("labels", "");
         String imageUrl = productJson.optString("image_url", "");
+        String ecoGrade = productJson.optString("ecoscore_grade", "");
+        int ecoScoreRaw = productJson.optInt("ecoscore_score", -1);
+        Integer ecoScore = ecoScoreRaw >= 0 ? ecoScoreRaw : null;
 
         List<String> categories = new ArrayList<>();
         if (!categoriesStr.isEmpty()) {
@@ -155,8 +158,9 @@ public class MainViewModel extends AndroidViewModel {
             }
         }
 
-        Product product = new Product(barcode, name, brand, categories, packaging, 
-                                     quantity, ingredients, labels, generic, imageUrl);
+        Product product = new Product(barcode, name, brand, categories, packaging,
+                                     quantity, ingredients, labels, generic, imageUrl,
+                                     ecoGrade, ecoScore);
         product.setId(barcode);
         return product;
     }

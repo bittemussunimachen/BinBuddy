@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
+import android.graphics.drawable.PictureDrawable;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -17,6 +19,7 @@ import com.example.binbuddy.domain.model.WasteCategory;
 import com.example.binbuddy.domain.service.PfandService;
 import com.example.binbuddy.domain.service.WasteClassificationService;
 import com.example.binbuddy.ui.viewmodel.ProductDetailViewModel;
+import com.caverock.androidsvg.SVG;
 import java.util.Locale;
 
 public class ProductDetailActivity extends AppCompatActivity {
@@ -113,11 +116,80 @@ public class ProductDetailActivity extends AppCompatActivity {
                 : getString(R.string.packaging_unknown));
         binding.tvIngredients.setText(formatList(product.getIngredients(), getString(R.string.no_product_data)));
 
+        displayGreenScore(product);
+
         WasteCategory category = wasteClassificationService.determineWasteCategory(product);
         displayWasteCategory(category);
 
         PfandInfo pfandInfo = pfandService.checkPfand(product);
         displayPfandInfo(pfandInfo);
+    }
+
+    private void displayGreenScore(Product product) {
+        if (product == null) {
+            binding.greenScoreRow.setVisibility(View.GONE);
+            return;
+        }
+        String grade = product.getEcoscoreGrade();
+        Integer score = product.getEcoscoreScore();
+
+        if (grade == null || grade.trim().isEmpty()) {
+            binding.greenScoreRow.setVisibility(View.GONE);
+            return;
+        }
+
+        String normalizedGrade = grade.trim().toUpperCase(Locale.getDefault());
+        binding.greenScoreRow.setVisibility(View.VISIBLE);
+        binding.tvGreenScoreGrade.setText(getString(R.string.green_score_grade_label, normalizedGrade));
+        if (score != null) {
+            binding.tvGreenScoreScore.setText(getString(R.string.green_score_score_label, score));
+        } else {
+            binding.tvGreenScoreScore.setText(getString(R.string.green_score_missing));
+        }
+
+        PictureDrawable drawable = loadGreenScoreDrawable(normalizedGrade);
+        if (drawable != null) {
+            binding.ivGreenScore.setVisibility(View.VISIBLE);
+            binding.ivGreenScore.setImageDrawable(drawable);
+            // Required for PictureDrawable to render properly
+            binding.ivGreenScore.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        } else {
+            binding.ivGreenScore.setVisibility(View.GONE);
+        }
+    }
+
+    private PictureDrawable loadGreenScoreDrawable(String grade) {
+        String assetName = mapGradeToAsset(grade);
+        try (java.io.InputStream inputStream = getAssets().open("greenscore/" + assetName)) {
+            SVG svg = SVG.getFromInputStream(inputStream);
+            return new PictureDrawable(svg.renderToPicture());
+        } catch (Exception e) {
+            Log.w("ProductDetailActivity", "GreenScore asset missing: " + assetName, e);
+            return null;
+        }
+    }
+
+    private String mapGradeToAsset(String grade) {
+        String normalized = grade.toLowerCase(Locale.getDefault());
+        switch (normalized) {
+            case "a+":
+            case "a_plus":
+                return "greenscore_a_plus.svg";
+            case "a":
+                return "greenscore_a.svg";
+            case "b":
+                return "greenscore_b.svg";
+            case "c":
+                return "greenscore_c.svg";
+            case "d":
+                return "greenscore_d.svg";
+            case "e":
+                return "greenscore_e.svg";
+            case "f":
+                return "greenscore_f.svg";
+            default:
+                return "greenscore_unknown.svg";
+        }
     }
 
     private void displayWasteCategory(WasteCategory category) {
