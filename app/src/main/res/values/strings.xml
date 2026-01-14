@@ -1,3 +1,152 @@
 <resources>
     <string name="app_name">Bin Buddy</string>
+    
+    <!-- Manual Entry -->
+    <string name="manual_entry_title">Enter barcode manually</string>
+    <string name="manual_entry_description">Enter the product barcode</string>
+    <string name="manual_entry_instruction">Enter the barcode manually</string>
+    <string name="barcode_hint">Barcode</string>
+    <string name="submit">Submit</string>
+    <string name="submit_barcode">Search product</string>
+    <string name="supported_barcode_formats">Supported formats: EAN-13, EAN-8, UPC-A, UPC-E</string>
+    <string name="barcode_format_help">Supported formats: EAN-13, EAN-8, UPC-A, UPC-E</string>
+    <string name="invalid_barcode">Invalid barcode. Please check your input.</string>
+    <string name="barcode_too_short">Barcode too short</string>
+    <string name="barcode_too_long">Barcode too long</string>
+    <string name="barcode_invalid_format">Invalid barcode format</string>
+    <string name="error_barcode_empty">Please enter a barcode</string>
+    <string name="error_barcode_invalid">Invalid barcode format</string>
+    
+    <!-- Scanner Activity -->
+    <string name="scanner_title">Scan product</string>
+    <string name="scanner_instruction">Position the barcode within the frame</string>
+    <string name="scanner_manual_entry">Barcode not readable? Enter manually</string>
+    <string name="scanner_barcode_detected">Barcode detected: %1$s</string>
+    <string name="scanner_error_init">Error initializing scanner</string>
+    <string name="scanner_error_camera">Error starting camera</string>
+    <string name="scanner_permission_required">Camera permission required</string>
+    
+    <!-- Product Adapter -->
+    <string name="no_brand">—</string>
+    <string name="no_categories">No categories</string>
+    <string name="packaging_unknown">Unknown packaging</string>
+    
+    <!-- Product Detail -->
+    <string name="product_detail_title">Product details</string>
+    <string name="product_name">Name</string>
+    <string name="product_brand">Brand</string>
+    <string name="product_categories">Categories</string>
+    <string name="product_packaging">Packaging</string>
+    <string name="product_quantity">Quantity</string>
+    <string name="product_ingredients">Ingredients</string>
+    <string name="waste_category">Waste category</string>
+    <string name="pfand_info">Deposit</string>
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="share">Share</string>
+    <string name="no_product_data">No product data available</string>
+    
+    <!-- Scan History -->
+    <string name="scan_history_title">Scan history</string>
+    <string name="scan_history_empty">No scans yet</string>
+    <string name="scan_history_empty_hint">Scan a product to see it here</string>
+    <string name="scan_history_deleted">Scan deleted</string>
+    <string name="undo">Undo</string>
+    
+    <!-- Bin Guide -->
+    <string name="bin_guide_title">Waste sorting guide</string>
+    <string name="bin_guide_no_categories">No categories available</string>
+    <string name="category_details">Category details</string>
+    <string name="description">Description</string>
+    
+    <!-- Pfand -->
+    <string name="pfand_info_title">Deposit system</string>
+    <string name="pfand_info_description">Information about the German deposit system</string>
+    <string name="pfand_amount">Deposit amount</string>
+    <string name="pfand_return_locations">Return locations</string>
+    <string name="pfand_how_it_works">How does deposit work?</string>
+    <string name="pfand_explanation">Germany\'s deposit system (Pfand) is a return scheme for one-way and reusable packaging. When buying certain drinks, a deposit is charged and refunded when you return the container.</string>
+    <string name="pfand_amounts">Deposit amounts</string>
+    <string name="pfand_8_cents">€0.08 - One-way bottles and cans</string>
+    <string name="pfand_15_cents">€0.15 - Reusable bottles (beer)</string>
+    <string name="pfand_25_cents">€0.25 - Reusable bottles (soft drinks)</string>
+    <string name="no_return_locations">No return locations found nearby</string>
+    <string name="enable_location">Enable location</string>
+    <string name="location_permission_required">Location permission required to show return locations</string>
+
+    <!-- Common / Navigation -->
+    <string name="search_enter_term">Enter a search term</string>
+
+    <!-- Main placeholders -->
+    <string name="main_open_profile">Opening profile…</string>
+    <string name="main_open_bin_guide">Opening bin guide…</string>
+    <string name="main_open_pfand_info">Opening deposit info…</string>
+    <string name="main_open_waste_calendar">Opening waste calendar…</string>
+    <string name="main_open_product_details">Opening product details…</string>
+    <string name="main_open_scan_history">Opening scan history…</string>
+    <string name="main_open_map">Opening map…</string>
+    <string name="main_error_open_scanner">Could not open scanner</string>
+    <string name="main_error_open_scanner_failed">Error opening scanner</string>
+    <string name="main_error_open_search">Could not open search</string>
+
+    <!-- Main (UI text) -->
+    <string name="main_avatar_initials">BB</string>
+    <string name="main_city_default">Gummersbach</string>
+    <string name="main_language_code">EN</string>
+    <string name="main_scan_headline">Scan a product to see where it goes</string>
+    <string name="main_scan_subtitle">Quick and easy recycling guidance</string>
+    <string name="main_scan_now">Scan now</string>
+    <string name="main_quick_actions">Quick actions</string>
+    <string name="main_what_bin_title">What goes in which bin?</string>
+    <string name="main_what_bin_subtitle">Simple guide</string>
+    <string name="main_pfand_title">How deposit works</string>
+    <string name="main_pfand_subtitle">Deposit system</string>
+    <string name="main_calendar_title">Waste calendar</string>
+    <string name="main_calendar_subtitle">Collection dates</string>
+    <string name="main_recently_scanned_title">Recently scanned products</string>
+    <string name="main_view_all">View all</string>
+    <string name="main_recent_product_name_placeholder">Coca-Cola bottle</string>
+    <string name="main_recent_last_scanned_placeholder">Last scanned: 2 min ago</string>
+    <string name="main_recent_pfand_label_placeholder">Deposit bottle</string>
+
+    <!-- Search (UI text) -->
+    <string name="search_title">Search products</string>
+    <string name="search_hint">Product or barcode</string>
+    <string name="search_germany_only">Germany only</string>
+    <string name="search_action">Search</string>
+    <string name="search_no_results">No results</string>
+
+    <!-- Placeholders -->
+    <string name="placeholder_product_name">Product name</string>
+    <string name="placeholder_brand">Brand</string>
+    <string name="placeholder_categories">Categories</string>
+    <string name="placeholder_packaging">Packaging</string>
+    <string name="placeholder_category_name">Category name</string>
+    <string name="placeholder_category_description">Category description</string>
+    <string name="placeholder_return_location_name">Location name</string>
+    <string name="placeholder_time">12:34</string>
+    <string name="placeholder_barcode_sample">Barcode: 1234567890123</string>
+
+    <!-- Scan History Adapter -->
+    <string name="unknown_product">Unknown product</string>
+    <string name="barcode_with_value">Barcode: %1$s</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_scan">Scan</string>
+    <string name="nav_map">Map</string>
+    <string name="nav_search">Search</string>
+    
+    <!-- Error messages -->
+    <string name="error_network">No internet connection. Please check your network settings.</string>
+    <string name="error_not_found">Product not found. Please check the barcode and try again.</string>
+    <string name="error_parse">Unable to process product data. Please try again.</string>
+    <string name="error_database">Unable to save or retrieve data. Please try again.</string>
+    <string name="error_offline">No internet connection. Showing cached data.</string>
+    <string name="error_timeout">Request timed out. Please check your connection and try again.</string>
+    <string name="error_server">Server error. Please try again later.</string>
+    <string name="error_unknown">An unexpected error occurred. Please try again.</string>
+    <string name="error_invalid_input">Invalid input. Please check your entry.</string>
+    <string name="error_offline_no_cache">No internet connection and no cached data available.</string>
+    <string name="error_retry">Retry</string>
+    <string name="error_dismiss">Dismiss</string>
 </resources>
