@@ -157,6 +157,9 @@
     <string name="nav_scan">Scan</string>
     <string name="nav_map">Map</string>
     <string name="nav_search">Search</string>
+    <string name="nav_account">Account</string>
+    <string name="map_title">Map</string>
+    <string name="account_title">Account</string>
     
     <!-- Error messages -->
     <string name="error_network">No internet connection. Please check your network settings.</string>
