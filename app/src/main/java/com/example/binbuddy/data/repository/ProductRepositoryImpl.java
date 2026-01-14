@@ -24,9 +24,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import kotlinx.coroutines.flow.Flow;
-import kotlinx.coroutines.flow.FlowKt;
 import kotlinx.coroutines.flow.MutableStateFlow;
 import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 import retrofit2.Response;
 
 /**
@@ -76,13 +76,13 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public Flow<Result<Product>> getProduct(String barcode) {
         if (barcode == null || barcode.trim().isEmpty()) {
-            MutableStateFlow<Result<Product>> errorFlow = new MutableStateFlow<>(
+            MutableStateFlow<Result<Product>> errorFlow = StateFlowKt.MutableStateFlow(
                 Result.error(AppError.invalidInputError("Barcode cannot be empty"))
             );
             return errorFlow;
         }
 
-        MutableStateFlow<Result<Product>> resultFlow = new MutableStateFlow<>(
+        MutableStateFlow<Result<Product>> resultFlow = StateFlowKt.MutableStateFlow(
             Result.success(null) // Initial loading state
         );
 
@@ -255,13 +255,13 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public Flow<Result<List<Product>>> searchProducts(String query, boolean germanyOnly) {
         if (query == null || query.trim().isEmpty()) {
-            MutableStateFlow<Result<List<Product>>> errorFlow = new MutableStateFlow<>(
+            MutableStateFlow<Result<List<Product>>> errorFlow = StateFlowKt.MutableStateFlow(
                 Result.error(AppError.invalidInputError("Search query cannot be empty"))
             );
             return errorFlow;
         }
 
-        MutableStateFlow<Result<List<Product>>> resultFlow = new MutableStateFlow<>(
+        MutableStateFlow<Result<List<Product>>> resultFlow = StateFlowKt.MutableStateFlow(
             Result.success(Collections.emptyList()) // Initial loading state
         );
 
@@ -405,13 +405,13 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public Flow<Result<List<Product>>> getProductsByWasteCategory(String wasteCategoryId) {
         if (wasteCategoryId == null || wasteCategoryId.trim().isEmpty()) {
-            MutableStateFlow<Result<List<Product>>> errorFlow = new MutableStateFlow<>(
+            MutableStateFlow<Result<List<Product>>> errorFlow = StateFlowKt.MutableStateFlow(
                 Result.error(AppError.invalidInputError("Waste category ID cannot be empty"))
             );
             return errorFlow;
         }
 
-        MutableStateFlow<Result<List<Product>>> resultFlow = new MutableStateFlow<>(
+        MutableStateFlow<Result<List<Product>>> resultFlow = StateFlowKt.MutableStateFlow(
             Result.success(Collections.emptyList()) // Initial loading state
         );
 

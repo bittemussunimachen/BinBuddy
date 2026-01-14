@@ -59,35 +59,6 @@ public class DatabaseInitializer extends RoomDatabase.Callback {
                 }
             );
         }
-        
-        List<WasteCategoryEntity> categories = Arrays.asList(
-            createCategory("gelbe_tonne", "Gelbe Tonne", "Yellow Bin", 
-                "Verpackungen aus Kunststoff, Metall und Verbundmaterialien", 
-                "Packaging made of plastic, metal and composite materials",
-                "ic_recycle", "#FFD700", 1),
-            createCategory("papier", "Papier", "Paper",
-                "Papier, Pappe, Kartonagen",
-                "Paper, cardboard, cartons",
-                "ic_description", "#2196F3", 2),
-            createCategory("glas", "Glas", "Glass",
-                "Glasflaschen und -behälter (nach Farben getrennt)",
-                "Glass bottles and containers (separated by color)",
-                "ic_invert_colors", "#4CAF50", 3),
-            createCategory("bio", "Bio", "Organic",
-                "Organische Abfälle, Lebensmittelreste",
-                "Organic waste, food scraps",
-                "ic_eco", "#8BC34A", 4),
-            createCategory("restmuell", "Restmüll", "Residual Waste",
-                "Nicht recycelbare Abfälle",
-                "Non-recyclable waste",
-                "ic_delete", "#757575", 5),
-            createCategory("pfand", "Pfand", "Deposit",
-                "Pfandpflichtige Flaschen und Dosen",
-                "Deposit bottles and cans",
-                "ic_attach_money", "#FF9800", 6)
-        );
-
-        dao.insertCategories(categories);
     }
 
     private WasteCategoryEntity createCategory(String id, String nameDe, String nameEn,

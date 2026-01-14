@@ -13,8 +13,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import kotlinx.coroutines.flow.Flow;
-import kotlinx.coroutines.flow.FlowKt;
 import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 /**
  * Implementation of WasteCategoryRepository.
@@ -36,14 +36,14 @@ public class WasteCategoryRepositoryImpl implements WasteCategoryRepository {
         // TODO: Convert Flow<List<WasteCategoryEntity>> to Flow<List<WasteCategory>>
         // For now, return empty flow
         List<WasteCategory> categories = new ArrayList<>();
-        MutableStateFlow<List<WasteCategory>> flow = new MutableStateFlow<>(categories);
+        MutableStateFlow<List<WasteCategory>> flow = StateFlowKt.MutableStateFlow(categories);
         return flow;
     }
 
     @Override
     public Flow<WasteCategory> getCategory(String id) {
         // TODO: Implement proper Flow conversion
-        MutableStateFlow<WasteCategory> flow = new MutableStateFlow<>(null);
+        MutableStateFlow<WasteCategory> flow = StateFlowKt.MutableStateFlow(null);
         return flow;
     }
 }
