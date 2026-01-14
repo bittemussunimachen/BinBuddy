@@ -51,36 +51,36 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnScan"
-                style="?attr/materialButtonFilledStyle"
+                style="@style/Widget.Material3.Button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/main_scan_now"
                 android:textAllCaps="false"
                 android:icon="@drawable/ic_scan"
-                android:iconPadding="12dp"
-                android:iconGravity="textStart" />
+                app:iconPadding="12dp"
+                app:iconGravity="textStart" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSearch"
-                style="?attr/materialButtonOutlinedStyle"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/search_action"
                 android:textAllCaps="false"
                 android:icon="@drawable/ic_search"
-                android:iconPadding="12dp"
-                android:iconGravity="textStart" />
+                app:iconPadding="12dp"
+                app:iconGravity="textStart" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnManualEntry"
-                style="?attr/materialButtonOutlinedStyle"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/scanner_manual_entry"
                 android:textAllCaps="false"
                 android:icon="@android:drawable/ic_menu_edit"
-                android:iconPadding="12dp"
-                android:iconGravity="textStart" />
+                app:iconPadding="12dp"
+                app:iconGravity="textStart" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardTip"

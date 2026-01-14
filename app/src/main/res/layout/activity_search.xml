@@ -46,15 +46,15 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSearch"
-            style="?attr/materialButtonFilledStyle"
+            style="@style/Widget.Material3.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="@string/search_action"
             android:textAllCaps="false"
             android:icon="@drawable/ic_search"
-            android:iconGravity="textStart"
-            android:iconPadding="12dp" />
+            app:iconGravity="textStart"
+            app:iconPadding="12dp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvProducts"

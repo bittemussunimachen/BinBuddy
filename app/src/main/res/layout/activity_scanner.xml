@@ -52,14 +52,14 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnManualEntry"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/scanner_manual_entry"
             android:textAllCaps="false"
             android:icon="@android:drawable/ic_menu_edit"
-            android:iconGravity="textStart"
-            android:iconPadding="12dp" />
+            app:iconGravity="textStart"
+            app:iconPadding="12dp" />
     </LinearLayout>
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
