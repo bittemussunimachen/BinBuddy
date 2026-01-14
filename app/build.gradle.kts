@@ -6,6 +6,14 @@ plugins {
     id("org.jetbrains.kotlin.kapt")
 }
 
+// Ensure Hilt/annotation processors use a modern JavaPoet (fixes canonicalName NoSuchMethodError)
+val javapoetVersion = libs.versions.javapoet.get()
+configurations.all {
+    resolutionStrategy {
+        force("com.squareup:javapoet:$javapoetVersion")
+    }
+}
+
 android {
     namespace = "com.example.binbuddy"
 
