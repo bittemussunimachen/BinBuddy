@@ -1,5 +1,7 @@
 package com.example.binbuddy.data.mapper;
 
+import com.example.binbuddy.data.remote.model.IngredientDto;
+import com.example.binbuddy.data.remote.model.ProductDto;
 import com.example.binbuddy.domain.model.Product;
 import com.example.binbuddy.domain.model.WasteCategory;
 
@@ -15,16 +17,51 @@ public class ProductMapper {
 
     /**
      * Convert ProductDto to Product domain model.
-     * This method will be implemented once ProductDto is created.
      * 
      * @param dto ProductDto from API response
      * @param wasteCategory WasteCategory for the product (can be null)
      * @return Product domain model
      */
-    public Product toDomain(Object dto, WasteCategory wasteCategory) {
-        // TODO: Implement once ProductDto is created
-        // This is a placeholder that will be replaced with actual mapping logic
-        throw new UnsupportedOperationException("ProductDto mapping not yet implemented");
+    public Product toDomain(ProductDto dto, WasteCategory wasteCategory) {
+        if (dto == null) {
+            return null;
+        }
+        
+        Product product = new Product();
+        
+        // Map basic fields
+        product.setBarcode(dto.getBarcode());
+        product.setName(dto.getProductName());
+        product.setBrand(dto.getBrands());
+        product.setPackaging(dto.getPackaging());
+        product.setQuantity(dto.getQuantity());
+        product.setLabels(dto.getLabels());
+        product.setGenericName(dto.getGenericName());
+        product.setImageUrl(dto.getImageUrl());
+        
+        // Parse categories string into list
+        product.setCategories(parseCategories(dto.getCategories()));
+        
+        // Convert ingredients from List<IngredientDto> to List<String>
+        List<String> ingredientsList = new ArrayList<>();
+        if (dto.getIngredients() != null) {
+            for (IngredientDto ingredientDto : dto.getIngredients()) {
+                if (ingredientDto != null && ingredientDto.getText() != null) {
+                    ingredientsList.add(ingredientDto.getText());
+                }
+            }
+        }
+        product.setIngredients(ingredientsList);
+        
+        // Set ID to barcode if barcode is available
+        if (dto.getBarcode() != null) {
+            product.setId(dto.getBarcode());
+        }
+        
+        // Note: ecoscoreGrade and ecoscoreScore are not in ProductDto,
+        // so they will remain null unless set elsewhere
+        
+        return product;
     }
 
     /**
@@ -68,8 +105,12 @@ public class ProductMapper {
         List<Product> products = new ArrayList<>();
         for (Object dto : dtos) {
             try {
-                Product product = toDomain(dto, null);
-                products.add(product);
+                if (dto instanceof ProductDto) {
+                    Product product = toDomain((ProductDto) dto, null);
+                    if (product != null) {
+                        products.add(product);
+                    }
+                }
             } catch (Exception e) {
                 // Skip invalid products
                 android.util.Log.w("ProductMapper", "Failed to map product", e);
