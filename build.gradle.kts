@@ -4,3 +4,12 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
 }
+
+// Force a modern JavaPoet for all classpaths (including buildscript/plugin)
+buildscript {
+    configurations.all {
+        resolutionStrategy {
+            force("com.squareup:javapoet:${libs.versions.javapoet.get()}")
+        }
+    }
+}
