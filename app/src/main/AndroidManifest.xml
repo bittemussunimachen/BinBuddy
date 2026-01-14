@@ -5,8 +5,11 @@
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
+        android:name=".BinBuddyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -33,6 +36,36 @@
             android:theme="@style/Theme.BinBuddy" />
         <activity
             android:name=".ui.ProductSearchActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.BinBuddy" />
+        <activity
+            android:name=".ui.ManualEntryActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.BinBuddy" />
+        <activity
+            android:name=".ui.ProductDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.BinBuddy" />
+        <activity
+            android:name=".ui.ScanHistoryActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.BinBuddy" />
+        <activity
+            android:name=".ui.BinGuideActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.BinBuddy" />
+        <activity
+            android:name=".ui.WasteCategoryDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.BinBuddy" />
+        <activity
+            android:name=".ui.PfandInfoActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.BinBuddy" />

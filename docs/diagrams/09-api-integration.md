@@ -11,8 +11,8 @@ graph TB
     end
     
     subgraph "Open Food Facts API"
-        PRODUCT_API[/api/v0/product/{barcode}.json]
-        SEARCH_API[/cgi/search.pl]
+        PRODUCT_API["/api/v0/product/{barcode}.json"]
+        SEARCH_API["/cgi/search.pl"]
     end
     
     MA -->|GET Request| PRODUCT_API
@@ -29,7 +29,8 @@ graph TB
 ## Current API Endpoints
 
 ### 1. Product Lookup by Barcode
-```
+
+```http
 GET https://world.openfoodfacts.org/api/v0/product/{barcode}.json
 
 Request:
@@ -53,7 +54,8 @@ Response:
 ```
 
 ### 2. Product Search
-```
+
+```http
 GET https://world.openfoodfacts.org/cgi/search.pl?
     search_terms={query}&
     search_simple=1&
@@ -131,6 +133,7 @@ graph TB
 ## Proposed Additional APIs
 
 ### 1. Municipal Waste Calendar API
+
 ```mermaid
 sequenceDiagram
     participant App
@@ -146,12 +149,14 @@ sequenceDiagram
 ```
 
 **Potential Sources:**
+
 - Municipal websites (scraping)
 - Open Data portals
 - Custom API if available
 
 ### 2. Pfand Database API
-```
+
+```http
 GET /pfand/check?barcode={barcode}
 
 Response:
@@ -170,7 +175,8 @@ Response:
 ```
 
 ### 3. Map Services (Google Maps / OpenStreetMap)
-```
+
+```http
 GET /places/search?query=pfand+return&location={lat},{lng}
 
 Response:
@@ -238,6 +244,7 @@ classDiagram
 ## API Request/Response Flow
 
 ### Current Flow (Simple)
+
 ```mermaid
 sequenceDiagram
     participant Activity
@@ -254,6 +261,7 @@ sequenceDiagram
 ```
 
 ### Proposed Flow (With Retrofit + RxJava/Coroutines)
+
 ```mermaid
 sequenceDiagram
     participant ViewModel
@@ -310,12 +318,14 @@ flowchart TD
 ## API Rate Limiting & Caching
 
 ### Current
+
 - ❌ No rate limiting
 - ❌ No caching
 - ❌ No retry logic
 - ❌ No offline support
 
 ### Proposed
+
 - ✅ Request caching (1 hour TTL)
 - ✅ Exponential backoff retry
 - ✅ Offline-first with cache
@@ -325,6 +335,7 @@ flowchart TD
 ## API Response Models
 
 ### ProductResponse
+
 ```kotlin
 data class ProductResponse(
     val status: Int,
@@ -347,6 +358,7 @@ data class ProductDto(
 ```
 
 ### SearchResponse
+
 ```kotlin
 data class SearchResponse(
     val products: List<ProductDto>,

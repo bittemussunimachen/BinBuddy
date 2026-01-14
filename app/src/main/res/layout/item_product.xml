@@ -19,7 +19,7 @@
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Product Name"
+            android:text="@string/placeholder_product_name"
             android:textStyle="bold"
             android:textSize="16sp"
             android:textColor="@color/text_primary" />
@@ -28,7 +28,7 @@
             android:id="@+id/tvBrand"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Brand"
+            android:text="@string/placeholder_brand"
             android:textSize="13sp"
             android:textColor="@color/text_secondary"
             android:paddingTop="2dp" />
@@ -37,7 +37,7 @@
             android:id="@+id/tvCategories"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Categories"
+            android:text="@string/placeholder_categories"
             android:textSize="12sp"
             android:textColor="@color/text_secondary"
             android:paddingTop="4dp" />
@@ -46,7 +46,7 @@
             android:id="@+id/tvPackaging"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Packaging"
+            android:text="@string/placeholder_packaging"
             android:textSize="12sp"
             android:textColor="@color/text_secondary"
             android:paddingTop="2dp" />

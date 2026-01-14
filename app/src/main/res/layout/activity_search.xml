@@ -30,7 +30,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Produkt suchen"
+            android:text="@string/search_title"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/text_primary"
@@ -55,7 +55,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Produkt oder Barcode"
+            android:hint="@string/search_hint"
             app:endIconMode="clear_text">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -78,14 +78,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="Nur Deutschland" />
+            android:text="@string/search_germany_only" />
 
             <Button
                 android:id="@+id/btnSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:text="Suchen" />
+            android:text="@string/search_action" />
         </LinearLayout>
     </LinearLayout>
 
@@ -109,7 +109,7 @@
         android:id="@+id/tvEmpty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Keine Ergebnisse"
+        android:text="@string/search_no_results"
         android:textSize="14sp"
         android:textColor="@color/text_secondary"
         android:layout_gravity="center"

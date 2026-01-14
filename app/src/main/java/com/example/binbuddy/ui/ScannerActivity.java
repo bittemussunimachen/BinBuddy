@@ -4,23 +4,27 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
-import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.binbuddy.R;
+import com.example.binbuddy.databinding.ActivityScannerBinding;
+import com.example.binbuddy.ui.viewmodel.ScannerViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
@@ -34,100 +38,97 @@ import java.util.concurrent.Executors;
 
 public class ScannerActivity extends AppCompatActivity {
 
+    private static final String TAG = "ScannerActivity";
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
-    private PreviewView previewView;
-    private View overlay;
-    private View scanFrame;
-    private TextView tvInstruction;
-    private ProgressBar progressBar;
-    private TextView tvManualEntry;
+    private static final long FINISH_DELAY_MS = 1500L;
+    private static final long CAMERA_EXECUTOR_SHUTDOWN_TIMEOUT_SECONDS = 2L;
 
+    private ActivityScannerBinding binding;
+    private ScannerViewModel viewModel;
     private ExecutorService cameraExecutor;
     private BarcodeScanner barcodeScanner;
-    private boolean isScanning = true;
+    private ActivityResultLauncher<Intent> manualEntryLauncher;
+    private final Handler finishHandler = new Handler(Looper.getMainLooper());
+    private final Runnable finishRunnable = () -> {
+        if (!isFinishing() && !isDestroyed()) {
+            finish();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
-            setContentView(R.layout.activity_scanner);
-            initViews();
-            setupBarcodeScanner();
-            checkCameraPermission();
-            setupClickListeners();
-        } catch (Exception e) {
-            android.util.Log.e("ScannerActivity", "Error in onCreate", e);
-            Toast.makeText(this, "Fehler beim Initialisieren des Scanners", Toast.LENGTH_LONG).show();
-            finish();
-        }
-    }
+        binding = ActivityScannerBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-    private void initViews() {
-        try {
-            previewView = findViewById(R.id.previewView);
-            overlay = findViewById(R.id.overlay);
-            scanFrame = findViewById(R.id.scanFrame);
-            tvInstruction = findViewById(R.id.tvInstruction);
-            progressBar = findViewById(R.id.progressBar);
-            tvManualEntry = findViewById(R.id.tvManualEntry);
-            
-            if (previewView == null) {
-                throw new NullPointerException("previewView is null");
-            }
-        } catch (Exception e) {
-            android.util.Log.e("ScannerActivity", "Error initializing views", e);
-            throw e;
-        }
+        viewModel = new ViewModelProvider(this).get(ScannerViewModel.class);
+        
+        setupBarcodeScanner();
+        setupActivityResultLaunchers();
+        setupObservers();
+        setupClickListeners();
+        checkCameraPermission();
     }
 
     private void setupBarcodeScanner() {
-        try {
-            BarcodeScannerOptions options = new BarcodeScannerOptions.Builder()
-                    .setBarcodeFormats(
-                            Barcode.FORMAT_EAN_13,
-                            Barcode.FORMAT_EAN_8,
-                            Barcode.FORMAT_UPC_A,
-                            Barcode.FORMAT_UPC_E,
-                            Barcode.FORMAT_CODE_128,
-                            Barcode.FORMAT_CODE_39,
-                            Barcode.FORMAT_QR_CODE)
-                    .build();
+        BarcodeScannerOptions options = new BarcodeScannerOptions.Builder()
+                .setBarcodeFormats(
+                        Barcode.FORMAT_EAN_13,
+                        Barcode.FORMAT_EAN_8,
+                        Barcode.FORMAT_UPC_A,
+                        Barcode.FORMAT_UPC_E,
+                        Barcode.FORMAT_CODE_128,
+                        Barcode.FORMAT_CODE_39,
+                        Barcode.FORMAT_QR_CODE)
+                .build();
 
-            barcodeScanner = BarcodeScanning.getClient(options);
-            if (barcodeScanner == null) {
-                throw new NullPointerException("BarcodeScanner is null");
-            }
+        barcodeScanner = BarcodeScanning.getClient(options);
+        cameraExecutor = Executors.newSingleThreadExecutor();
+    }
 
-            cameraExecutor = Executors.newSingleThreadExecutor();
-            if (cameraExecutor == null) {
-                throw new NullPointerException("cameraExecutor is null");
+    private void setupObservers() {
+        viewModel.getScanResult().observe(this, barcode -> {
+            if (barcode != null && !barcode.isEmpty()) {
+                handleBarcodeResult(barcode);
             }
-        } catch (Exception e) {
-            android.util.Log.e("ScannerActivity", "Error setting up barcode scanner", e);
-            Toast.makeText(this, "Fehler beim Initialisieren des Barcode-Scanners", Toast.LENGTH_LONG).show();
-            finish();
-        }
+        });
+
+        viewModel.getError().observe(this, error -> {
+            if (error != null) {
+                Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+                viewModel.clearError();
+            }
+        });
+
+        viewModel.getIsScanning().observe(this, isScanning -> {
+            boolean scanning = Boolean.TRUE.equals(isScanning);
+            binding.progressBar.setVisibility(scanning ? View.GONE : View.VISIBLE);
+        });
     }
 
     private void setupClickListeners() {
-        try {
-            View btnBack = findViewById(R.id.btnBack);
-            if (btnBack != null) {
-                btnBack.setOnClickListener(v -> finish());
-            }
+        binding.btnBack.setOnClickListener(v -> finish());
 
-            if (tvManualEntry != null) {
-                tvManualEntry.setOnClickListener(v -> {
-                    try {
-                        Toast.makeText(this, "Manuelle Eingabe wird noch implementiert", Toast.LENGTH_SHORT).show();
-                    } catch (Exception e) {
-                        android.util.Log.e("ScannerActivity", "Error in manual entry click", e);
+        binding.tvManualEntry.setOnClickListener(v -> openManualEntry());
+    }
+
+    private void setupActivityResultLaunchers() {
+        manualEntryLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        String barcode = result.getData().getStringExtra(ProductDetailActivity.EXTRA_BARCODE);
+                        if (barcode != null && !barcode.isEmpty()) {
+                            viewModel.processBarcode(barcode);
+                        }
                     }
-                });
-            }
-        } catch (Exception e) {
-            android.util.Log.e("ScannerActivity", "Error setting up click listeners", e);
-        }
+                }
+        );
+    }
+
+    private void openManualEntry() {
+        Intent intent = new Intent(this, ManualEntryActivity.class);
+        manualEntryLauncher.launch(intent);
     }
 
     private void checkCameraPermission() {
@@ -148,246 +149,138 @@ public class ScannerActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startCamera();
             } else {
-                Toast.makeText(this, "Kamera-Berechtigung benötigt", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.scanner_permission_required), Toast.LENGTH_LONG).show();
                 finish();
             }
         }
     }
 
     private void startCamera() {
-        if (previewView == null) {
-            android.util.Log.e("ScannerActivity", "previewView is null, cannot start camera");
-            Toast.makeText(this, "Kamera-Vorschau konnte nicht initialisiert werden", Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
+        ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
+                ProcessCameraProvider.getInstance(this);
 
-        if (cameraExecutor == null || cameraExecutor.isShutdown()) {
-            android.util.Log.e("ScannerActivity", "cameraExecutor is null or shutdown");
-            return;
-        }
+        cameraProviderFuture.addListener(() -> {
+            try {
+                ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
 
-        try {
-            ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
-                    ProcessCameraProvider.getInstance(this);
+                Preview preview = new Preview.Builder().build();
+                preview.setSurfaceProvider(binding.previewView.getSurfaceProvider());
 
-            cameraProviderFuture.addListener(() -> {
-                try {
-                    ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
-                    if (cameraProvider == null) {
-                        throw new NullPointerException("CameraProvider is null");
-                    }
+                ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
+                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                        .build();
 
-                    if (previewView == null) {
-                        android.util.Log.e("ScannerActivity", "previewView became null");
+                imageAnalysis.setAnalyzer(cameraExecutor, imageProxy -> {
+                    Boolean isScanning = viewModel.getIsScanning().getValue();
+                    if (isScanning == null || !isScanning) {
+                        imageProxy.close();
                         return;
                     }
 
-                    Preview preview = new Preview.Builder().build();
-                    preview.setSurfaceProvider(previewView.getSurfaceProvider());
+                    processImageProxy(imageProxy);
+                });
 
-                    ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
-                            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                            .build();
+                CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
 
-                    imageAnalysis.setAnalyzer(cameraExecutor, imageProxy -> {
-                        try {
-                            if (imageProxy == null) {
-                                return;
-                            }
-                            
-                            if (!isScanning) {
-                                imageProxy.close();
-                                return;
-                            }
+                cameraProvider.bindToLifecycle(
+                        this,
+                        cameraSelector,
+                        preview,
+                        imageAnalysis
+                );
 
-                            processImageProxy(imageProxy);
-                        } catch (Exception e) {
-                            android.util.Log.e("ScannerActivity", "Error in image analyzer", e);
-                            try {
-                                if (imageProxy != null) {
-                                    imageProxy.close();
-                                }
-                            } catch (Exception closeException) {
-                                android.util.Log.e("ScannerActivity", "Error closing imageProxy", closeException);
-                            }
-                        }
-                    });
-
-                    CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
-
-                    Camera camera = cameraProvider.bindToLifecycle(
-                            this,
-                            cameraSelector,
-                            preview,
-                            imageAnalysis
-                    );
-
-                } catch (ExecutionException | InterruptedException e) {
-                    android.util.Log.e("ScannerActivity", "Error starting camera", e);
-                    runOnUiThread(() -> {
-                        Toast.makeText(this, "Fehler beim Starten der Kamera", Toast.LENGTH_SHORT).show();
-                        finish();
-                    });
-                } catch (Exception e) {
-                    android.util.Log.e("ScannerActivity", "Unexpected error starting camera", e);
-                    runOnUiThread(() -> {
-                        Toast.makeText(this, "Unerwarteter Fehler beim Starten der Kamera", Toast.LENGTH_SHORT).show();
-                        finish();
-                    });
-                }
-            }, ContextCompat.getMainExecutor(this));
-        } catch (Exception e) {
-            android.util.Log.e("ScannerActivity", "Error getting camera provider", e);
-            Toast.makeText(this, "Kamera-Service nicht verfügbar", Toast.LENGTH_LONG).show();
-            finish();
-        }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                Log.e(TAG, "Interrupted starting camera", e);
+                runOnUiThread(() -> {
+                    Toast.makeText(this, getString(R.string.scanner_error_camera), Toast.LENGTH_SHORT).show();
+                    finish();
+                });
+            } catch (ExecutionException e) {
+                Log.e(TAG, "Error starting camera", e);
+                runOnUiThread(() -> {
+                    Toast.makeText(this, getString(R.string.scanner_error_camera), Toast.LENGTH_SHORT).show();
+                    finish();
+                });
+            }
+        }, ContextCompat.getMainExecutor(this));
     }
 
     private void processImageProxy(androidx.camera.core.ImageProxy imageProxy) {
-        if (imageProxy == null) {
-            android.util.Log.w("ScannerActivity", "imageProxy is null");
-            return;
-        }
-
-        if (barcodeScanner == null) {
-            android.util.Log.w("ScannerActivity", "barcodeScanner is null");
+        android.media.Image mediaImage = imageProxy.getImage();
+        if (mediaImage == null) {
             imageProxy.close();
             return;
         }
 
-        try {
-            android.media.Image mediaImage = imageProxy.getImage();
-            if (mediaImage == null) {
-                android.util.Log.w("ScannerActivity", "mediaImage is null");
-                imageProxy.close();
-                return;
-            }
+        int rotationDegrees = imageProxy.getImageInfo() != null 
+            ? imageProxy.getImageInfo().getRotationDegrees() 
+            : 0;
 
-            int rotationDegrees = 0;
-            if (imageProxy.getImageInfo() != null) {
-                rotationDegrees = imageProxy.getImageInfo().getRotationDegrees();
-            }
+        InputImage image = InputImage.fromMediaImage(mediaImage, rotationDegrees);
 
-            InputImage image = InputImage.fromMediaImage(mediaImage, rotationDegrees);
+        barcodeScanner.process(image)
+                .addOnSuccessListener(barcodes -> {
+                    Boolean isScanning = viewModel.getIsScanning().getValue();
+                    if (isScanning == null || !isScanning) {
+                        imageProxy.close();
+                        return;
+                    }
 
-            barcodeScanner.process(image)
-                    .addOnSuccessListener(barcodes -> {
-                        try {
-                            if (!isScanning) {
-                                imageProxy.close();
-                                return;
-                            }
-
-                            if (barcodes != null) {
-                                for (Barcode barcode : barcodes) {
-                                    if (barcode != null) {
-                                        String rawValue = barcode.getRawValue();
-                                        if (rawValue != null && !rawValue.isEmpty()) {
-                                            isScanning = false;
-                                            handleBarcodeResult(rawValue);
-                                            break;
-                                        }
-                                    }
+                    if (barcodes != null) {
+                        for (Barcode barcode : barcodes) {
+                            if (barcode != null) {
+                                String rawValue = barcode.getRawValue();
+                                if (rawValue != null && !rawValue.isEmpty()) {
+                                    viewModel.processBarcode(rawValue);
+                                    imageProxy.close();
+                                    return;
                                 }
                             }
-                        } catch (Exception e) {
-                            android.util.Log.e("ScannerActivity", "Error processing barcodes", e);
-                        } finally {
-                            try {
-                                imageProxy.close();
-                            } catch (Exception e) {
-                                android.util.Log.e("ScannerActivity", "Error closing imageProxy in success", e);
-                            }
                         }
-                    })
-                    .addOnFailureListener(e -> {
-                        android.util.Log.e("ScannerActivity", "Error processing image", e);
-                        try {
-                            imageProxy.close();
-                        } catch (Exception closeException) {
-                            android.util.Log.e("ScannerActivity", "Error closing imageProxy in failure", closeException);
-                        }
-                    });
-        } catch (Exception e) {
-            android.util.Log.e("ScannerActivity", "Error creating InputImage", e);
-            try {
-                imageProxy.close();
-            } catch (Exception closeException) {
-                android.util.Log.e("ScannerActivity", "Error closing imageProxy in catch", closeException);
-            }
-        }
+                    }
+                    imageProxy.close();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error processing image", e);
+                    imageProxy.close();
+                });
     }
 
     private void handleBarcodeResult(String barcode) {
-        if (barcode == null || barcode.isEmpty()) {
-            android.util.Log.w("ScannerActivity", "Barcode is null or empty");
-            return;
-        }
+        binding.progressBar.setVisibility(View.VISIBLE);
+        binding.tvInstruction.setText(getString(R.string.scanner_barcode_detected, barcode));
 
-        try {
-            runOnUiThread(() -> {
-                try {
-                    if (progressBar != null) {
-                        progressBar.setVisibility(View.VISIBLE);
-                    }
-                    
-                    if (tvInstruction != null) {
-                        tvInstruction.setText("Barcode erkannt: " + barcode);
-                    }
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(ProductDetailActivity.EXTRA_BARCODE, barcode);
+        setResult(RESULT_OK, resultIntent);
 
-                    Intent resultIntent = new Intent();
-                    resultIntent.putExtra("barcode", barcode);
-                    setResult(RESULT_OK, resultIntent);
-
-                    android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
-                    handler.postDelayed(() -> {
-                        try {
-                            if (!isFinishing() && !isDestroyed()) {
-                                finish();
-                            }
-                        } catch (Exception e) {
-                            android.util.Log.e("ScannerActivity", "Error finishing activity", e);
-                        }
-                    }, 1500);
-                } catch (Exception e) {
-                    android.util.Log.e("ScannerActivity", "Error in handleBarcodeResult UI thread", e);
-                }
-            });
-        } catch (Exception e) {
-            android.util.Log.e("ScannerActivity", "Error scheduling handleBarcodeResult", e);
-        }
+        finishHandler.removeCallbacks(finishRunnable);
+        finishHandler.postDelayed(finishRunnable, FINISH_DELAY_MS);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        isScanning = false;
+        finishHandler.removeCallbacks(finishRunnable);
+        viewModel.stopScanning();
         
-        try {
-            if (barcodeScanner != null) {
-                barcodeScanner.close();
-                barcodeScanner = null;
-            }
-        } catch (Exception e) {
-            android.util.Log.e("ScannerActivity", "Error closing barcodeScanner", e);
+        if (barcodeScanner != null) {
+            barcodeScanner.close();
         }
         
-        try {
-            if (cameraExecutor != null && !cameraExecutor.isShutdown()) {
-                cameraExecutor.shutdown();
-                try {
-                    if (!cameraExecutor.awaitTermination(2, java.util.concurrent.TimeUnit.SECONDS)) {
-                        cameraExecutor.shutdownNow();
-                    }
-                } catch (InterruptedException e) {
+        if (cameraExecutor != null && !cameraExecutor.isShutdown()) {
+            cameraExecutor.shutdown();
+            try {
+                if (!cameraExecutor.awaitTermination(CAMERA_EXECUTOR_SHUTDOWN_TIMEOUT_SECONDS, java.util.concurrent.TimeUnit.SECONDS)) {
                     cameraExecutor.shutdownNow();
-                    Thread.currentThread().interrupt();
                 }
+            } catch (InterruptedException e) {
+                cameraExecutor.shutdownNow();
+                Thread.currentThread().interrupt();
             }
-        } catch (Exception e) {
-            android.util.Log.e("ScannerActivity", "Error shutting down cameraExecutor", e);
         }
+        
+        binding = null;
     }
 }
-

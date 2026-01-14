@@ -26,7 +26,7 @@
             android:background="@drawable/bg_circle"
             android:backgroundTint="@color/primary_green"
             android:gravity="center"
-            android:text="BB"
+            android:text="@string/main_avatar_initials"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:textSize="16sp"
@@ -52,7 +52,7 @@
                     android:id="@+id/tvCity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Gummersbach"
+                    android:text="@string/main_city_default"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="@color/text_primary" />
@@ -69,7 +69,7 @@
             android:id="@+id/tvLanguage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="GB"
+            android:text="@string/main_language_code"
             android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@color/text_secondary" />
@@ -128,7 +128,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Scan a product to see where it goes"
+                        android:text="@string/main_scan_headline"
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold"
@@ -138,7 +138,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Quick and easy recycling guidance"
+                        android:text="@string/main_scan_subtitle"
                         android:textColor="@color/white"
                         android:textSize="13sp"
                         android:gravity="center" />
@@ -148,7 +148,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
-                        android:text="Scan now"
+                        android:text="@string/main_scan_now"
                         android:textAllCaps="false"
                         app:cornerRadius="24dp"
                         android:backgroundTint="@color/white"
@@ -167,7 +167,7 @@
                 android:id="@+id/tvQuickActionsTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Quick Actions"
+                android:text="@string/main_quick_actions"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"
@@ -211,7 +211,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="What goes in which bin?"
+                            android:text="@string/main_what_bin_title"
                             android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@color/text_primary" />
@@ -219,7 +219,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Simple guide"
+                            android:text="@string/main_what_bin_subtitle"
                             android:textSize="12sp"
                             android:textColor="@color/text_secondary" />
                     </LinearLayout>
@@ -264,7 +264,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="How Pfand works"
+                            android:text="@string/main_pfand_title"
                             android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@color/text_primary" />
@@ -272,7 +272,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Deposit system"
+                            android:text="@string/main_pfand_subtitle"
                             android:textSize="12sp"
                             android:textColor="@color/text_secondary" />
                     </LinearLayout>
@@ -317,7 +317,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Waste calendar"
+                            android:text="@string/main_calendar_title"
                             android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@color/text_primary" />
@@ -325,7 +325,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Collection dates"
+                            android:text="@string/main_calendar_subtitle"
                             android:textSize="12sp"
                             android:textColor="@color/text_secondary" />
                     </LinearLayout>
@@ -344,7 +344,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Recently Scanned Products"
+                    android:text="@string/main_recently_scanned_title"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="@color/text_primary" />
@@ -353,7 +353,7 @@
                     android:id="@+id/tvViewAll"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="View all"
+                    android:text="@string/main_view_all"
                     android:textSize="12sp"
                     android:textColor="@color/primary_green"
                     android:padding="4dp"
@@ -396,7 +396,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Coca-Cola Bottle"
+                            android:text="@string/main_recent_product_name_placeholder"
                             android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@color/text_primary" />
@@ -404,7 +404,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Last scanned: 2 min ago"
+                            android:text="@string/main_recent_last_scanned_placeholder"
                             android:textSize="12sp"
                     android:textColor="@color/text_secondary" />
                 </LinearLayout>
@@ -412,7 +412,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Pfand bottle"
+                        android:text="@string/main_recent_pfand_label_placeholder"
                         android:textSize="11sp"
                         android:textStyle="bold"
                         android:textColor="@color/white"

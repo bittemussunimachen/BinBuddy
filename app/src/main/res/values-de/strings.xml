@@ -1,0 +1,139 @@
+<resources>
+    <string name="app_name">Bin Buddy</string>
+
+    <!-- Manual Entry -->
+    <string name="manual_entry_title">Barcode manuell eingeben</string>
+    <string name="manual_entry_description">Geben Sie den Barcode des Produkts ein</string>
+    <string name="manual_entry_instruction">Geben Sie den Barcode manuell ein</string>
+    <string name="barcode_hint">Barcode</string>
+    <string name="submit">Eingeben</string>
+    <string name="submit_barcode">Produkt suchen</string>
+    <string name="supported_barcode_formats">Unterstützte Formate: EAN-13, EAN-8, UPC-A, UPC-E</string>
+    <string name="barcode_format_help">Unterstützte Formate: EAN-13, EAN-8, UPC-A, UPC-E</string>
+    <string name="invalid_barcode">Ungültiger Barcode. Bitte überprüfen Sie die Eingabe.</string>
+    <string name="barcode_too_short">Barcode zu kurz</string>
+    <string name="barcode_too_long">Barcode zu lang</string>
+    <string name="barcode_invalid_format">Ungültiges Barcode-Format</string>
+    <string name="error_barcode_empty">Bitte geben Sie einen Barcode ein</string>
+    <string name="error_barcode_invalid">Ungültiges Barcode-Format</string>
+
+    <!-- Scanner Activity -->
+    <string name="scanner_title">Produkt scannen</string>
+    <string name="scanner_instruction">Positioniere den Barcode im Rahmen</string>
+    <string name="scanner_manual_entry">Barcode nicht lesbar? Manuell eingeben</string>
+    <string name="scanner_barcode_detected">Barcode erkannt: %1$s</string>
+    <string name="scanner_error_init">Fehler beim Initialisieren des Scanners</string>
+    <string name="scanner_error_camera">Fehler beim Starten der Kamera</string>
+    <string name="scanner_permission_required">Kamera-Berechtigung benötigt</string>
+
+    <!-- Product Adapter -->
+    <string name="no_brand">—</string>
+    <string name="no_categories">Keine Kategorien</string>
+    <string name="packaging_unknown">Verpackung unbekannt</string>
+
+    <!-- Product Detail -->
+    <string name="product_detail_title">Produktdetails</string>
+    <string name="product_name">Name</string>
+    <string name="product_brand">Marke</string>
+    <string name="product_categories">Kategorien</string>
+    <string name="product_packaging">Verpackung</string>
+    <string name="product_quantity">Menge</string>
+    <string name="product_ingredients">Zutaten</string>
+    <string name="waste_category">Müllkategorie</string>
+    <string name="pfand_info">Pfand</string>
+    <string name="add_to_favorites">Zu Favoriten hinzufügen</string>
+    <string name="share">Teilen</string>
+    <string name="no_product_data">Keine Produktdaten verfügbar</string>
+
+    <!-- Scan History -->
+    <string name="scan_history_title">Scan-Historie</string>
+    <string name="scan_history_empty">Noch keine Scans</string>
+    <string name="scan_history_empty_hint">Scannen Sie ein Produkt, um es hier zu sehen</string>
+    <string name="scan_history_deleted">Scan gelöscht</string>
+    <string name="undo">Rückgängig</string>
+
+    <!-- Bin Guide -->
+    <string name="bin_guide_title">Mülltrennung Guide</string>
+    <string name="bin_guide_no_categories">Keine Kategorien verfügbar</string>
+    <string name="category_details">Kategorie Details</string>
+    <string name="description">Beschreibung</string>
+
+    <!-- Pfand -->
+    <string name="pfand_info_title">Pfand-System</string>
+    <string name="pfand_info_description">Informationen zum deutschen Pfandsystem</string>
+    <string name="pfand_amount">Pfandbetrag</string>
+    <string name="pfand_return_locations">Rückgabeorte</string>
+    <string name="pfand_how_it_works">Wie funktioniert Pfand?</string>
+    <string name="pfand_explanation">Das deutsche Pfandsystem (Pfand) ist ein Rücknahmesystem für Einweg- und Mehrwegverpackungen. Beim Kauf bestimmter Getränke wird ein Pfandbetrag erhoben, der bei Rückgabe der Verpackung erstattet wird.</string>
+    <string name="pfand_amounts">Pfandbeträge</string>
+    <string name="pfand_8_cents">0,08 € - Einwegflaschen und Dosen</string>
+    <string name="pfand_15_cents">0,15 € - Mehrwegflaschen (Bier)</string>
+    <string name="pfand_25_cents">0,25 € - Mehrwegflaschen (Softdrinks)</string>
+    <string name="no_return_locations">Keine Rückgabeorte in der Nähe gefunden</string>
+    <string name="enable_location">Standort aktivieren</string>
+    <string name="location_permission_required">Standortberechtigung erforderlich, um Rückgabeorte anzuzeigen</string>
+
+    <!-- Common / Navigation -->
+    <string name="search_enter_term">Suchbegriff eingeben</string>
+
+    <!-- Main placeholders -->
+    <string name="main_open_profile">Profil wird geöffnet…</string>
+    <string name="main_open_bin_guide">Bin Guide wird geöffnet…</string>
+    <string name="main_open_pfand_info">Pfand-Info wird geöffnet…</string>
+    <string name="main_open_waste_calendar">Waste Calendar wird geöffnet…</string>
+    <string name="main_open_product_details">Produktdetails werden geöffnet…</string>
+    <string name="main_open_scan_history">Scan-Historie wird geöffnet…</string>
+    <string name="main_open_map">Karte wird geöffnet…</string>
+    <string name="main_error_open_scanner">Scanner konnte nicht geöffnet werden</string>
+    <string name="main_error_open_scanner_failed">Fehler beim Öffnen des Scanners</string>
+    <string name="main_error_open_search">Suche konnte nicht geöffnet werden</string>
+
+    <!-- Main (UI text) -->
+    <string name="main_avatar_initials">BB</string>
+    <string name="main_city_default">Gummersbach</string>
+    <string name="main_language_code">DE</string>
+    <string name="main_scan_headline">Scanne ein Produkt, um zu sehen, wo es hingehört</string>
+    <string name="main_scan_subtitle">Schnelle und einfache Recycling-Hilfe</string>
+    <string name="main_scan_now">Jetzt scannen</string>
+    <string name="main_quick_actions">Schnellzugriffe</string>
+    <string name="main_what_bin_title">Was gehört in welche Tonne?</string>
+    <string name="main_what_bin_subtitle">Einfacher Guide</string>
+    <string name="main_pfand_title">So funktioniert Pfand</string>
+    <string name="main_pfand_subtitle">Pfandsystem</string>
+    <string name="main_calendar_title">Abfallkalender</string>
+    <string name="main_calendar_subtitle">Abholtermine</string>
+    <string name="main_recently_scanned_title">Kürzlich gescannte Produkte</string>
+    <string name="main_view_all">Alle anzeigen</string>
+    <string name="main_recent_product_name_placeholder">Coca-Cola Flasche</string>
+    <string name="main_recent_last_scanned_placeholder">Zuletzt gescannt: vor 2 Min.</string>
+    <string name="main_recent_pfand_label_placeholder">Pfandflasche</string>
+
+    <!-- Search (UI text) -->
+    <string name="search_title">Produkt suchen</string>
+    <string name="search_hint">Produkt oder Barcode</string>
+    <string name="search_germany_only">Nur Deutschland</string>
+    <string name="search_action">Suchen</string>
+    <string name="search_no_results">Keine Ergebnisse</string>
+
+    <!-- Placeholders -->
+    <string name="placeholder_product_name">Produktname</string>
+    <string name="placeholder_brand">Marke</string>
+    <string name="placeholder_categories">Kategorien</string>
+    <string name="placeholder_packaging">Verpackung</string>
+    <string name="placeholder_category_name">Kategorie Name</string>
+    <string name="placeholder_category_description">Kategorie Beschreibung</string>
+    <string name="placeholder_return_location_name">Ort</string>
+    <string name="placeholder_time">12:34</string>
+    <string name="placeholder_barcode_sample">Barcode: 1234567890123</string>
+
+    <!-- Scan History Adapter -->
+    <string name="unknown_product">Unbekanntes Produkt</string>
+    <string name="barcode_with_value">Barcode: %1$s</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">Start</string>
+    <string name="nav_scan">Scannen</string>
+    <string name="nav_map">Karte</string>
+    <string name="nav_search">Suche</string>
+</resources>
+
