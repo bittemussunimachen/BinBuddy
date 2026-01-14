@@ -45,6 +45,11 @@
     <string name="green_score_grade_label">Grade %1$s</string>
     <string name="green_score_score_label">%1$d / 100</string>
     <string name="green_score_missing">Green score not available</string>
+    <string name="environment_title">Environment</string>
+    <string name="environment_eco_score">Eco score</string>
+    <string name="environment_packaging">Packaging impact</string>
+    <string name="environment_threatened_species">Threatened species</string>
+    <string name="environment_carbon">Carbon footprint</string>
     <string name="add_to_favorites">Add to favorites</string>
     <string name="share">Share</string>
     <string name="no_product_data">No product data available</string>
