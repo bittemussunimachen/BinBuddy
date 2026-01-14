@@ -171,4 +171,46 @@
     <string name="error_offline_no_cache">No internet connection and no cached data available.</string>
     <string name="error_retry">Retry</string>
     <string name="error_dismiss">Dismiss</string>
+
+    <!-- Dashboard / quests -->
+    <string name="dashboard_title">Bin Buddy</string>
+    <string name="dashboard_subtitle">Sustainability dashboard</string>
+    <string name="dashboard_level_label">Level</string>
+    <string name="dashboard_next_level_hint">%1$d XP to next level</string>
+    <string name="dashboard_diversion_label">Weekly diversion</string>
+    <string name="dashboard_contamination_label">Contamination</string>
+    <string name="dashboard_streak_label">Streak</string>
+    <string name="dashboard_tip_placeholder">Rinse containers and keep caps loose to avoid contamination.</string>
+    <string name="dashboard_tip_high_contamination">Contamination is high. Empty liquids and rinse items before binning.</string>
+    <string name="dashboard_tip_push_diversion">Almost there—separate paper and plastic to hit this week’s target.</string>
+    <string name="dashboard_tip_great_job">Great diversion! Lock a 7-day streak with one more scan today.</string>
+    <string name="dashboard_coins_format">%1$d coins</string>
+    <string name="dashboard_streak_value">%1$d-day streak</string>
+    <string name="dashboard_contamination_value">%1$d%% clean</string>
+    <string name="dashboard_quests_title">Quests</string>
+    <string name="dashboard_quests_subtitle">Complete quests to earn XP and coins.</string>
+    <string name="dashboard_daily_quests">Daily quests</string>
+    <string name="dashboard_weekly_quests">Weekly quests</string>
+    <string name="dashboard_quests_empty">Nothing here yet. New quests arrive soon.</string>
+    <string name="dashboard_quests_error">Could not load quests. Try again.</string>
+    <string name="dashboard_refresh_quests">Refresh quests</string>
+    <string name="dashboard_quick_actions_title">Quick actions</string>
+    <string name="dashboard_report_issue">Report issue</string>
+    <string name="dashboard_pickup_title">Next pickup</string>
+    <string name="dashboard_pickup_window">Tomorrow · 07:00–09:00</string>
+    <string name="dashboard_pickup_type">Blue bin · Paper &amp; cardboard</string>
+    <string name="dashboard_open_calendar">Open calendar</string>
+    <string name="dashboard_community_title">Community impact</string>
+    <string name="dashboard_community_impact">Together diverted 1.4t this month</string>
+    <string name="dashboard_open_leaderboard">View leaderboard</string>
+    <string name="dashboard_alert_title">Contamination alert</string>
+    <string name="dashboard_alert_body">Last pickup flagged 1 item. See why and how to fix.</string>
+    <string name="dashboard_alert_action">Fix contamination</string>
+    <string name="dashboard_quest_cta">Do it</string>
+    <string name="dashboard_quest_resume_cta">Resume</string>
+    <string name="dashboard_quest_claim_cta">Claim</string>
+    <string name="dashboard_quest_claimed">Claimed</string>
+    <string name="dashboard_quest_ready">Ready to claim</string>
+    <string name="dashboard_quest_claimed_status">Completed</string>
+    <string name="dashboard_level_progress_label">Level progress</string>
 </resources>
