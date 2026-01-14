@@ -178,6 +178,7 @@
     <!-- Dashboard / quests -->
     <string name="dashboard_title">Bin Buddy</string>
     <string name="dashboard_subtitle">Sustainability dashboard</string>
+    <string name="dashboard_welcome">Welcome back!</string>
     <string name="dashboard_level_label">Level</string>
     <string name="dashboard_next_level_hint">%1$d XP to next level</string>
     <string name="dashboard_diversion_label">Weekly diversion</string>

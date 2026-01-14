@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
+import androidx.navigation.NavHostFragment;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -32,7 +33,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupNavigation() {
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        navController = navHostFragment != null ? navHostFragment.getNavController() : null;
+        
+        if (navController == null) {
+            return;
+        }
         
         BottomNavigationView bottomNav = binding.bottomNavigation;
         NavigationUI.setupWithNavController(bottomNav, navController);
@@ -58,13 +65,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupFAB() {
         binding.fabScan.setOnClickListener(v -> {
-            navController.navigate(R.id.scanFragment);
+            if (navController != null) {
+                navController.navigate(R.id.scanFragment);
+            }
         });
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        return navController.navigateUp() || super.onSupportNavigateUp();
+        return (navController != null && navController.navigateUp()) || super.onSupportNavigateUp();
     }
 
     @Override

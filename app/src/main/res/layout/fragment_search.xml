@@ -27,10 +27,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/search_hint"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusTopStart="@dimen/corner_radius_small"
+            app:boxCornerRadiusTopEnd="@dimen/corner_radius_small"
+            app:boxCornerRadiusBottomStart="@dimen/corner_radius_small"
+            app:boxCornerRadiusBottomEnd="@dimen/corner_radius_small"
             app:endIconMode="clear_text">
 
             <com.google.android.material.textfield.TextInputEditText

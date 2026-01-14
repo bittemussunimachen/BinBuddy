@@ -1,16 +1,38 @@
 <resources>
-    <color name="primary_green">#22C55E</color>
-    <color name="primary_green_dark">#16A34A</color>
+    <!-- Primary Green Theme - Modern #4CAF50 -->
+    <color name="primary_green">#4CAF50</color>
+    <color name="primary_green_dark">#388E3C</color>
+    <color name="primary_green_light">#81C784</color>
+    
+    <!-- Accent Colors -->
     <color name="blue_accent">#2563EB</color>
     <color name="orange_accent">#F97316</color>
     <color name="purple_accent">#A855F7</color>
 
+    <!-- Background Colors -->
     <color name="background_light">#F3F4F6</color>
     <color name="card_background">#FFFFFF</color>
+    <color name="white">#FFFFFF</color>
 
+    <!-- Text Colors -->
     <color name="text_primary">#111827</color>
     <color name="text_secondary">#6B7280</color>
+    <color name="text_on_green">#FFFFFF</color>
+    
+    <!-- Chip Colors -->
+    <color name="chip_selected_bg">#4CAF50</color>
+    <color name="chip_selected_text">#FFFFFF</color>
+    <color name="chip_unselected_bg">#FFFFFF</color>
+    <color name="chip_unselected_border">#4CAF50</color>
+    <color name="chip_unselected_text">#4CAF50</color>
+    
+    <!-- Button Colors -->
+    <color name="button_primary_bg">#4CAF50</color>
+    <color name="button_primary_text">#FFFFFF</color>
+    <color name="button_secondary_bg">#FFFFFF</color>
+    <color name="button_secondary_border">#4CAF50</color>
+    <color name="button_secondary_text">#4CAF50</color>
+    
+    <!-- Error -->
     <color name="error">#B00020</color>
-
-    <color name="white">#FFFFFF</color>
 </resources>
