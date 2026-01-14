@@ -16,14 +16,15 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.binbuddy.R;
 import com.example.binbuddy.databinding.FragmentHomeBinding;
-import com.example.binbuddy.ui.BinGuideActivity;
 import com.example.binbuddy.ui.ManualEntryActivity;
 import com.example.binbuddy.ui.ProductDetailActivity;
+import com.example.binbuddy.ui.viewmodel.UserProgressViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
@@ -38,6 +39,7 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private ActivityResultLauncher<Intent> barcodeLauncher;
     private NavController navController;
+    private UserProgressViewModel progressViewModel;
 
     @Nullable
     @Override
@@ -51,9 +53,46 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         
         navController = Navigation.findNavController(view);
+        setupViewModel();
         setupActivityResultLauncher();
         setupClickListeners();
         loadDashboard();
+    }
+    
+    private void setupViewModel() {
+        progressViewModel = new ViewModelProvider(this).get(UserProgressViewModel.class);
+        
+        // Observe coin changes
+        progressViewModel.getCoins().observe(getViewLifecycleOwner(), coins -> {
+            int safeCoins = getOrDefault(coins, 0);
+            binding.tvCoins.setText(getString(R.string.dashboard_coins_format, safeCoins));
+        });
+        
+        // Observe XP changes
+        progressViewModel.getXp().observe(getViewLifecycleOwner(), xp -> updateXpDisplay());
+        
+        // Observe level changes
+        progressViewModel.getLevel().observe(getViewLifecycleOwner(), level -> {
+            int safeLevel = getOrDefault(level, 1);
+            binding.tvLevel.setText(String.format(Locale.getDefault(), "%d", safeLevel));
+            updateXpDisplay();
+        });
+        
+        // Observe streak changes
+        progressViewModel.getStreakDays().observe(getViewLifecycleOwner(), streak -> {
+            int safeStreak = getOrDefault(streak, 0);
+            binding.chipStreak.setText(getString(R.string.dashboard_streak_value, safeStreak));
+        });
+    }
+    
+    private void updateXpDisplay() {
+        int currentLevelXp = progressViewModel.getCurrentLevelXp();
+        int currentLevelXpTarget = progressViewModel.getCurrentLevelXpTarget();
+        int cappedXp = Math.min(currentLevelXp, currentLevelXpTarget);
+        binding.progressXp.setMax(currentLevelXpTarget);
+        binding.progressXp.setProgress(cappedXp);
+        int gap = Math.max(0, currentLevelXpTarget - currentLevelXp);
+        binding.tvXpGap.setText(getString(R.string.dashboard_next_level_hint, gap));
     }
 
     private void setupClickListeners() {
@@ -65,6 +104,17 @@ public class HomeFragment extends Fragment {
         binding.btnOpenLeaderboard.setOnClickListener(v -> showToast(R.string.dashboard_open_leaderboard));
         binding.btnAlertAction.setOnClickListener(v -> showToast(R.string.dashboard_alert_action));
         binding.btnRefreshQuests.setOnClickListener(v -> loadDashboard());
+        
+        // Make coin display clickable
+        binding.tvCoins.setOnClickListener(v -> showCoinDetails());
+    }
+    
+    private void showCoinDetails() {
+        Integer coins = progressViewModel.getCoins().getValue();
+        int safeCoins = getOrDefault(coins, 0);
+        Toast.makeText(requireContext(),
+                String.format(Locale.getDefault(), "You have %d coins! Keep completing quests to earn more.", safeCoins),
+                Toast.LENGTH_SHORT).show();
     }
 
     private void setupActivityResultLauncher() {
@@ -85,13 +135,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void openManualEntry() {
-        Intent intent = new Intent(getContext(), ManualEntryActivity.class);
+        Intent intent = new Intent(requireContext(), ManualEntryActivity.class);
         barcodeLauncher.launch(intent);
-    }
-
-    private void openBinGuide() {
-        Intent intent = new Intent(getContext(), BinGuideActivity.class);
-        startActivity(intent);
     }
 
     private void navigateToProductDetailIfValid(String barcode) {
@@ -102,7 +147,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void navigateToProductDetail(String barcode) {
-        Intent intent = new Intent(getContext(), ProductDetailActivity.class);
+        Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
         intent.putExtra(ProductDetailActivity.EXTRA_BARCODE, barcode);
         startActivity(intent);
     }
@@ -117,21 +162,36 @@ public class HomeFragment extends Fragment {
     }
 
     private void showToast(int resId) {
-        Toast.makeText(getContext(), getString(resId), Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), getString(resId), Toast.LENGTH_SHORT).show();
+    }
+    
+    private void showToast(String message) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private int getOrDefault(Integer value, int defaultValue) {
+        return value != null ? value : defaultValue;
     }
 
     private void loadDashboard() {
         setQuestState(ContentState.LOADING, binding.questDailyLoading, binding.questDailyEmpty, binding.questDailyError, binding.containerDailyQuests);
         setQuestState(ContentState.LOADING, binding.questWeeklyLoading, binding.questWeeklyEmpty, binding.questWeeklyError, binding.containerWeeklyQuests);
 
+        // Get real progress data from ViewModel
+        int coins = getOrDefault(progressViewModel.getCoins().getValue(), 0);
+        int level = getOrDefault(progressViewModel.getLevel().getValue(), 1);
+        int xp = getOrDefault(progressViewModel.getXp().getValue(), 0);
+        int xpTarget = getOrDefault(progressViewModel.getXpTarget().getValue(), progressViewModel.getCurrentLevelXpTarget());
+        int streak = getOrDefault(progressViewModel.getStreakDays().getValue(), 0);
+
         DashboardProgress progress = new DashboardProgress(
-                4,
-                240,
-                480,
-                800,
-                68,
-                6,
-                3,
+                level,
+                coins,
+                xp,
+                xpTarget,
+                68, // diversionPercent - TODO: get from actual data
+                streak,
+                3, // contaminationPercent - TODO: get from actual data
                 getString(R.string.dashboard_tip_placeholder)
         );
 
@@ -166,13 +226,19 @@ public class HomeFragment extends Fragment {
     }
 
     private void renderProgress(DashboardProgress progress) {
+        // Level and coins are now updated via ViewModel observers
+        // But we still set them here for initial load
         binding.tvLevel.setText(String.format(Locale.getDefault(), "%d", progress.level));
         binding.tvCoins.setText(getString(R.string.dashboard_coins_format, progress.coins));
 
-        int cappedXp = Math.min(progress.xpCurrent, progress.xpTarget);
-        binding.progressXp.setMax(progress.xpTarget);
+        // XP display is now updated via ViewModel observers
+        // But we still set it here for initial load
+        int currentLevelXp = progressViewModel.getCurrentLevelXp();
+        int currentLevelXpTarget = progressViewModel.getCurrentLevelXpTarget();
+        int cappedXp = Math.min(currentLevelXp, currentLevelXpTarget);
+        binding.progressXp.setMax(currentLevelXpTarget);
         binding.progressXp.setProgress(cappedXp);
-        int gap = Math.max(0, progress.xpTarget - progress.xpCurrent);
+        int gap = Math.max(0, currentLevelXpTarget - currentLevelXp);
         binding.tvXpGap.setText(getString(R.string.dashboard_next_level_hint, gap));
 
         binding.progressDiversion.setProgress(progress.diversionPercent);
@@ -202,7 +268,7 @@ public class HomeFragment extends Fragment {
 
     private void renderQuestList(List<Quest> quests, LinearLayout container) {
         container.removeAllViews();
-        LayoutInflater inflater = LayoutInflater.from(getContext());
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
         for (Quest quest : quests) {
             View card = inflater.inflate(R.layout.item_quest, container, false);
             bindQuestCard(quest, card);
@@ -234,7 +300,11 @@ public class HomeFragment extends Fragment {
 
         if (quest.status == QuestStatus.READY_TO_CLAIM) {
             quest.status = QuestStatus.CLAIMED;
-            showToast(R.string.dashboard_quest_claimed);
+            // Award coins and XP when quest is claimed
+            progressViewModel.addCoins(quest.coinsReward);
+            progressViewModel.addXp(quest.xpReward);
+            showToast(String.format(Locale.getDefault(),
+                    "Quest claimed! +%d XP · +%d coins", quest.xpReward, quest.coinsReward));
         } else {
             quest.progress = Math.min(quest.target, quest.progress + 1);
             if (quest.progress >= quest.target) {
@@ -279,7 +349,7 @@ public class HomeFragment extends Fragment {
     private void renderCommunity(CommunityState state) {
         binding.tvCommunityImpact.setText(state.impactCopy);
         binding.containerLeaderboard.removeAllViews();
-        LayoutInflater inflater = LayoutInflater.from(getContext());
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
         for (CommunityEntry entry : state.entries) {
             TextView view = (TextView) inflater.inflate(android.R.layout.simple_list_item_1, binding.containerLeaderboard, false);
             view.setText(String.format(Locale.getDefault(), "%d. %s — %s", entry.rank, entry.name, entry.impact));

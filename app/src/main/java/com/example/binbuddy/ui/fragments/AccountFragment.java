@@ -9,14 +9,19 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.binbuddy.R;
 import com.example.binbuddy.databinding.FragmentAccountBinding;
 import com.example.binbuddy.ui.ScanHistoryActivity;
+import com.example.binbuddy.ui.viewmodel.UserProgressViewModel;
+
+import java.util.Locale;
 
 public class AccountFragment extends Fragment {
 
     private FragmentAccountBinding binding;
+    private UserProgressViewModel progressViewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -28,8 +33,25 @@ public class AccountFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        setupViewModel();
         setupClickListeners();
         loadUserProfile();
+    }
+    
+    private void setupViewModel() {
+        progressViewModel = new ViewModelProvider(this).get(UserProgressViewModel.class);
+        
+        // Observe coin changes
+        progressViewModel.getCoins().observe(getViewLifecycleOwner(), coins -> {
+            int safeCoins = getOrDefault(coins, 0);
+            binding.textViewUserCoins.setText(String.format(Locale.getDefault(), "%d coins", safeCoins));
+        });
+        
+        // Observe level changes
+        progressViewModel.getLevel().observe(getViewLifecycleOwner(), level -> {
+            int safeLevel = getOrDefault(level, 1);
+            binding.textViewUserLevel.setText(String.format(Locale.getDefault(), "Level %d", safeLevel));
+        });
     }
 
     private void setupClickListeners() {
@@ -62,19 +84,38 @@ public class AccountFragment extends Fragment {
             // TODO: Implement logout
             Toast.makeText(requireContext(), "Logout coming soon", Toast.LENGTH_SHORT).show();
         });
+        
+        // Make coin display clickable
+        binding.textViewUserCoins.setOnClickListener(v -> showCoinDetails());
+    }
+    
+    private void showCoinDetails() {
+        int coins = getOrDefault(progressViewModel.getCoins().getValue(), 0);
+        Toast.makeText(requireContext(),
+                String.format(Locale.getDefault(), "You have %d coins! Keep completing quests to earn more.", coins),
+                Toast.LENGTH_SHORT).show();
     }
 
     private void loadUserProfile() {
         // TODO: Load actual user data from ViewModel/Repository
         binding.textViewUserName.setText("Bin Buddy User");
         binding.textViewUserEmail.setText("user@example.com");
-        binding.textViewUserLevel.setText("Level 4");
-        binding.textViewUserCoins.setText("240 coins");
+        
+        // Level and coins are now loaded from ViewModel via observers
+        // But set initial values here as fallback
+        int level = getOrDefault(progressViewModel.getLevel().getValue(), 1);
+        int coins = getOrDefault(progressViewModel.getCoins().getValue(), 0);
+        binding.textViewUserLevel.setText(String.format(Locale.getDefault(), "Level %d", level));
+        binding.textViewUserCoins.setText(String.format(Locale.getDefault(), "%d coins", coins));
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private int getOrDefault(Integer value, int defaultValue) {
+        return value != null ? value : defaultValue;
     }
 }

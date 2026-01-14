@@ -99,7 +99,7 @@ public class ScanFragment extends Fragment {
 
         viewModel.getError().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
-                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
                 viewModel.clearError();
             }
         });
@@ -137,7 +137,7 @@ public class ScanFragment extends Fragment {
                     if (isGranted) {
                         startCamera();
                     } else {
-                        Toast.makeText(getContext(), getString(R.string.scanner_permission_required), Toast.LENGTH_LONG).show();
+                        Toast.makeText(requireContext(), getString(R.string.scanner_permission_required), Toast.LENGTH_LONG).show();
                         NavController navController = Navigation.findNavController(requireView());
                         navController.navigateUp();
                     }
@@ -146,7 +146,7 @@ public class ScanFragment extends Fragment {
     }
 
     private void openManualEntry() {
-        Intent intent = new Intent(getContext(), ManualEntryActivity.class);
+        Intent intent = new Intent(requireContext(), ManualEntryActivity.class);
         manualEntryLauncher.launch(intent);
     }
 
@@ -175,8 +175,8 @@ public class ScanFragment extends Fragment {
                         .build();
 
                 imageAnalysis.setAnalyzer(cameraExecutor, imageProxy -> {
-                    Boolean isScanning = viewModel.getIsScanning().getValue();
-                    if (isScanning == null || !isScanning) {
+                    boolean isScanning = Boolean.TRUE.equals(viewModel.getIsScanning().getValue());
+                    if (!isScanning) {
                         imageProxy.close();
                         return;
                     }
@@ -196,14 +196,10 @@ public class ScanFragment extends Fragment {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 Log.e(TAG, "Interrupted starting camera", e);
-                if (getContext() != null) {
-                    Toast.makeText(getContext(), getString(R.string.scanner_error_camera), Toast.LENGTH_SHORT).show();
-                }
+                Toast.makeText(requireContext(), getString(R.string.scanner_error_camera), Toast.LENGTH_SHORT).show();
             } catch (ExecutionException e) {
                 Log.e(TAG, "Error starting camera", e);
-                if (getContext() != null) {
-                    Toast.makeText(getContext(), getString(R.string.scanner_error_camera), Toast.LENGTH_SHORT).show();
-                }
+                Toast.makeText(requireContext(), getString(R.string.scanner_error_camera), Toast.LENGTH_SHORT).show();
             }
         }, ContextCompat.getMainExecutor(requireContext()));
     }
@@ -223,8 +219,8 @@ public class ScanFragment extends Fragment {
 
         barcodeScanner.process(image)
                 .addOnSuccessListener(barcodes -> {
-                    Boolean isScanning = viewModel.getIsScanning().getValue();
-                    if (isScanning == null || !isScanning) {
+                    boolean isScanning = Boolean.TRUE.equals(viewModel.getIsScanning().getValue());
+                    if (!isScanning) {
                         imageProxy.close();
                         return;
                     }
@@ -253,7 +249,7 @@ public class ScanFragment extends Fragment {
         binding.progressBar.setVisibility(View.VISIBLE);
         binding.tvInstruction.setText(getString(R.string.scanner_barcode_detected, barcode));
 
-        Intent intent = new Intent(getContext(), ProductDetailActivity.class);
+        Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
         intent.putExtra(ProductDetailActivity.EXTRA_BARCODE, barcode);
         startActivity(intent);
     }

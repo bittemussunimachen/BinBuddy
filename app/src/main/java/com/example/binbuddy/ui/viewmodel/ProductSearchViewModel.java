@@ -7,32 +7,38 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.binbuddy.domain.model.AppError;
 import com.example.binbuddy.domain.model.Product;
+import com.example.binbuddy.domain.model.Result;
+import com.example.binbuddy.domain.repository.ProductRepository;
+import com.example.binbuddy.util.FlowCollector;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import javax.inject.Inject;
 
+import dagger.hilt.android.lifecycle.HiltViewModel;
+import kotlinx.coroutines.flow.Flow;
+
+/**
+ * ViewModel for product search functionality.
+ * Uses ProductRepository to search for products via OpenFoodFacts API.
+ */
+@HiltViewModel
 public class ProductSearchViewModel extends AndroidViewModel {
-    private final ExecutorService networkExecutor = Executors.newSingleThreadExecutor();
-    private final OkHttpClient httpClient = new OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(20, TimeUnit.SECONDS)
-            .callTimeout(25, TimeUnit.SECONDS)
-            .build();
+    
+    private final ProductRepository productRepository;
+    private FlowCollector<Result<List<Product>>> currentCollector;
     
     private final MutableLiveData<List<Product>> searchResults = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<String> error = new MutableLiveData<>();
 
-    public ProductSearchViewModel(@NonNull Application application) {
+    @Inject
+    public ProductSearchViewModel(@NonNull Application application, ProductRepository productRepository) {
         super(application);
+        this.productRepository = productRepository;
     }
 
     public LiveData<List<Product>> getSearchResults() {
@@ -47,126 +53,101 @@ public class ProductSearchViewModel extends AndroidViewModel {
         return error;
     }
 
+    /**
+     * Search for products using the repository.
+     * @param query Search query string
+     * @param germanyOnly Whether to filter results to Germany only
+     */
     public void searchProducts(String query, boolean germanyOnly) {
         if (query == null || query.trim().isEmpty()) {
             error.setValue("Suchbegriff eingeben");
             return;
         }
 
+        // Cancel previous search if any
+        if (currentCollector != null) {
+            currentCollector.cancel();
+        }
+
         isLoading.setValue(true);
         error.setValue(null);
+        searchResults.setValue(new ArrayList<>());
         
-        networkExecutor.execute(() -> {
-            try {
-                List<Product> results = searchOpenFoodFacts(query.trim(), germanyOnly);
-                searchResults.postValue(results);
+        // Use repository to search products
+        Flow<Result<List<Product>>> searchFlow = productRepository.searchProducts(query.trim(), germanyOnly);
+        
+        // Collect Flow values and update LiveData
+        currentCollector = new FlowCollector<>(
+            searchFlow,
+            result -> handleSearchResult(result),
+            throwable -> {
+                android.util.Log.e("ProductSearchViewModel", "Error collecting search flow", throwable);
                 isLoading.postValue(false);
-            } catch (Exception e) {
-                android.util.Log.e("ProductSearchViewModel", "Search error", e);
-                error.postValue("Fehler bei der Suche: " + e.getMessage());
-                isLoading.postValue(false);
+                error.postValue("Fehler bei der Suche: " + throwable.getMessage());
             }
-        });
+        );
+        
+        currentCollector.start();
     }
-
-    private List<Product> searchOpenFoodFacts(String term, boolean germanyOnly) throws Exception {
-        String encoded = java.net.URLEncoder.encode(term, java.nio.charset.StandardCharsets.UTF_8);
-        StringBuilder urlBuilder = new StringBuilder("https://world.openfoodfacts.org/cgi/search.pl?");
-        urlBuilder.append("search_terms=").append(encoded);
-        urlBuilder.append("&search_simple=1&action=process&json=1&page_size=25");
-        if (germanyOnly) {
-            urlBuilder.append("&countries_tags_en=Germany");
-        }
-
-        Request request = new Request.Builder()
-                .url(urlBuilder.toString())
-                .get()
-                .header("Accept", "application/json")
-                .header("User-Agent", "BinBuddy/1.0 (Android)")
-                .build();
-
-        try (Response response = httpClient.newCall(request).execute()) {
-            String body = response.body() != null ? response.body().string() : "";
-            if (!response.isSuccessful()) {
-                throw new java.io.IOException("Search request failed: HTTP " + response.code());
+    
+    private void handleSearchResult(Result<List<Product>> result) {
+        isLoading.postValue(false);
+        
+        if (result.isSuccess()) {
+            List<Product> products = result.getData();
+            if (products != null) {
+                searchResults.postValue(products);
+            } else {
+                searchResults.postValue(new ArrayList<>());
             }
-            return parseProducts(body, germanyOnly);
-        }
-    }
-
-    private List<Product> parseProducts(String rawJson, boolean germanyOnly) throws org.json.JSONException {
-        org.json.JSONObject root = new org.json.JSONObject(rawJson);
-        org.json.JSONArray products = root.optJSONArray("products");
-        List<Product> items = new ArrayList<>();
-        if (products == null) {
-            return items;
-        }
-
-        for (int i = 0; i < products.length(); i++) {
-            org.json.JSONObject obj = products.optJSONObject(i);
-            if (obj == null) {
-                continue;
+            
+            // Check for offline warning (cached data)
+            if (result.isFromCache()) {
+                String message = result.getErrorMessage();
+                if (message != null && !message.isEmpty()) {
+                    // Show info message but still display results
+                    android.util.Log.i("ProductSearchViewModel", message);
+                }
             }
-
-            if (germanyOnly && !isGerman(obj)) {
-                continue;
-            }
-
-            String name = obj.optString("product_name", "");
-            if (android.text.TextUtils.isEmpty(name)) {
-                name = obj.optString("generic_name", "");
-            }
-            String brand = obj.optString("brands", "");
-            String categoriesStr = obj.optString("categories", "");
-            String packaging = obj.optString("packaging", obj.optString("packaging_tags", ""));
-            String code = obj.optString("code", "");
-            String quantity = obj.optString("quantity", "");
-            String imageUrl = obj.optString("image_url", "");
-            String ecoGrade = obj.optString("ecoscore_grade", "");
-            int ecoScoreRaw = obj.optInt("ecoscore_score", -1);
-            Integer ecoScore = ecoScoreRaw >= 0 ? ecoScoreRaw : null;
-
-            if (android.text.TextUtils.isEmpty(name)) {
-                continue;
-            }
-
-            List<String> categories = new ArrayList<>();
-            if (!categoriesStr.isEmpty()) {
-                String[] catArray = categoriesStr.split(",");
-                for (String cat : catArray) {
-                    if (!cat.trim().isEmpty()) {
-                        categories.add(cat.trim());
+        } else {
+            // Handle error
+            AppError appError = result.getError();
+            String errorMessage = "Fehler bei der Suche";
+            
+            if (appError != null) {
+                AppError.ErrorType errorType = appError.getErrorType();
+                if (errorType == AppError.ErrorType.NETWORK_ERROR) {
+                    errorMessage = "Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.";
+                } else if (errorType == AppError.ErrorType.OFFLINE_ERROR) {
+                    errorMessage = "Keine Internetverbindung. Bitte versuchen Sie es später erneut.";
+                } else if (errorType == AppError.ErrorType.TIMEOUT_ERROR) {
+                    errorMessage = "Zeitüberschreitung. Bitte versuchen Sie es erneut.";
+                } else if (errorType == AppError.ErrorType.SERVER_ERROR) {
+                    errorMessage = "Serverfehler. Bitte versuchen Sie es später erneut.";
+                } else {
+                    // Use user-friendly message from AppError
+                    String userMessage = appError.getUserMessage();
+                    if (userMessage != null && !userMessage.isEmpty()) {
+                        errorMessage = userMessage;
+                    } else {
+                        String technicalMessage = appError.getTechnicalMessage();
+                        if (technicalMessage != null && !technicalMessage.isEmpty()) {
+                            errorMessage = technicalMessage;
+                        }
                     }
                 }
             }
-
-            Product product = new Product(code, name, brand, categories, packaging,
-                                        quantity, new ArrayList<>(), "", "", imageUrl,
-                                        ecoGrade, ecoScore);
-            product.setId(code);
-            items.add(product);
+            
+            error.postValue(errorMessage);
+            searchResults.postValue(new ArrayList<>());
         }
-
-        return items;
-    }
-
-    private boolean isGerman(org.json.JSONObject obj) {
-        org.json.JSONArray countryTags = obj.optJSONArray("countries_tags");
-        if (countryTags != null) {
-            for (int i = 0; i < countryTags.length(); i++) {
-                String tag = countryTags.optString(i, "").toLowerCase();
-                if (tag.contains("germany") || tag.contains("deutschland")) {
-                    return true;
-                }
-            }
-        }
-        String countries = obj.optString("countries", "").toLowerCase();
-        return countries.contains("germany") || countries.contains("deutschland");
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
-        networkExecutor.shutdownNow();
+        if (currentCollector != null) {
+            currentCollector.cancel();
+        }
     }
 }

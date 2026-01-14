@@ -144,7 +144,10 @@
                             android:layout_height="wrap_content"
                             android:text="240 coins"
                             android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
-                            android:textColor="@color/primary_green" />
+                            android:textColor="@color/primary_green"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?attr/selectableItemBackground" />
 
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="wrap_content"
