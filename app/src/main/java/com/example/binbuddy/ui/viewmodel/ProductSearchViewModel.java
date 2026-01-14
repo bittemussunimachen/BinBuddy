@@ -13,6 +13,7 @@ import com.example.binbuddy.domain.model.Result;
 import com.example.binbuddy.domain.repository.ProductRepository;
 import com.example.binbuddy.util.FlowCollector;
 import kotlin.Unit;
+import java.util.concurrent.CancellationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +86,10 @@ public class ProductSearchViewModel extends AndroidViewModel {
                 return Unit.INSTANCE;
             },
             throwable -> {
+                if (throwable instanceof CancellationException) {
+                    // Ignore expected cancellations when new searches start or scope clears
+                    return Unit.INSTANCE;
+                }
                 android.util.Log.e("ProductSearchViewModel", "Error collecting search flow", throwable);
                 isLoading.postValue(false);
                 error.postValue("Fehler bei der Suche: " + throwable.getMessage());
