@@ -107,9 +107,8 @@ public class ScannerActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        binding.btnBack.setOnClickListener(v -> finish());
-
-        binding.tvManualEntry.setOnClickListener(v -> openManualEntry());
+        binding.toolbar.setNavigationOnClickListener(v -> finish());
+        binding.btnManualEntry.setOnClickListener(v -> openManualEntry());
     }
 
     private void setupActivityResultLaunchers() {

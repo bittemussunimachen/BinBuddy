@@ -41,7 +41,7 @@ public class ProductSearchActivity extends AppCompatActivity {
     private void setupRecyclerView() {
         adapter = new ProductAdapter(new java.util.ArrayList<>());
         adapter.setOnItemClickListener(product -> {
-            navigateToProductDetailIfValid(product != null ? product.getBarcode() : null);
+            navigateToProductDetailIfValid(product);
         });
         
         binding.rvProducts.setLayoutManager(new LinearLayoutManager(this));
@@ -49,7 +49,7 @@ public class ProductSearchActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        binding.btnBack.setOnClickListener(v -> finish());
+        binding.toolbar.setNavigationOnClickListener(v -> finish());
 
         binding.btnSearch.setOnClickListener(v -> startSearch());
 
@@ -90,19 +90,25 @@ public class ProductSearchActivity extends AppCompatActivity {
             return;
         }
         boolean germanyOnly = binding.checkGermany.isChecked();
+        binding.tvEmpty.setVisibility(View.GONE);
         viewModel.searchProducts(term, germanyOnly);
     }
 
-    private void navigateToProductDetailIfValid(String barcode) {
+    private void navigateToProductDetailIfValid(com.example.binbuddy.domain.model.Product product) {
+        String barcode = product != null ? product.getBarcode() : null;
         if (TextUtils.isEmpty(barcode)) {
             return;
         }
-        navigateToProductDetail(barcode.trim());
+        String name = product != null ? product.getName() : null;
+        navigateToProductDetail(barcode.trim(), name);
     }
 
-    private void navigateToProductDetail(String barcode) {
+    private void navigateToProductDetail(String barcode, String productName) {
         Intent intent = new Intent(this, ProductDetailActivity.class);
         intent.putExtra(ProductDetailActivity.EXTRA_BARCODE, barcode);
+        if (!TextUtils.isEmpty(productName)) {
+            intent.putExtra(ProductDetailActivity.EXTRA_PRODUCT_NAME, productName);
+        }
         startActivity(intent);
     }
 

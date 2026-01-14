@@ -1,58 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/background_light"
-    android:padding="12dp">
+    android:background="?attr/colorSurface">
 
-    <LinearLayout
-        android:id="@+id/topBar"
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="8dp"
-        android:background="@color/white"
-        android:elevation="2dp">
-
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@android:drawable/ic_media_previous"
-            android:padding="6dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:tint="@color/text_primary" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/search_title"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:gravity="center" />
-
-        <View
-            android:layout_width="32dp"
-            android:layout_height="32dp" />
-    </LinearLayout>
+        android:title="@string/search_title"
+        app:navigationIcon="@android:drawable/ic_media_previous"
+        app:navigationContentDescription="@string/search_title" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="8dp"
-        android:background="@color/white"
-        android:elevation="1dp"
-        android:layout_marginTop="8dp">
+        android:padding="16dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputLayoutSearch"
-            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+            style="@style/Widget.Material3.TextInputLayout.FilledBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/search_hint"
@@ -66,55 +36,51 @@
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/checkGermany"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingTop="8dp">
-
-            <CheckBox
-                android:id="@+id/checkGermany"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
+            android:layout_marginTop="8dp"
+            android:checked="true"
             android:text="@string/search_germany_only" />
 
-            <Button
-                android:id="@+id/btnSearch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-            android:text="@string/search_action" />
-        </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSearch"
+            style="?attr/materialButtonFilledStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/search_action"
+            android:textAllCaps="false"
+            android:icon="@drawable/ic_search"
+            android:iconGravity="textStart"
+            android:iconPadding="12dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvProducts"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingTop="12dp"
+            android:clipToPadding="false" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tvEmpty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/search_no_results"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:layout_gravity="center_horizontal"
+            android:padding="8dp"
+            android:visibility="gone" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvProducts"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingTop="8dp"
-        android:clipToPadding="false" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/tvEmpty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/search_no_results"
-        android:textSize="14sp"
-        android:textColor="@color/text_secondary"
-        android:layout_gravity="center"
-        android:padding="8dp"
-        android:visibility="gone" />
-
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
 
