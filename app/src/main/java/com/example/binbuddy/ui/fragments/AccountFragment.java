@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import dagger.hilt.android.AndroidEntryPoint;
 
 import com.example.binbuddy.R;
 import com.example.binbuddy.databinding.FragmentAccountBinding;
@@ -18,6 +19,7 @@ import com.example.binbuddy.ui.viewmodel.UserProgressViewModel;
 
 import java.util.Locale;
 
+@AndroidEntryPoint
 public class AccountFragment extends Fragment {
 
     private FragmentAccountBinding binding;

@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import dagger.hilt.android.AndroidEntryPoint;
 
 import com.example.binbuddy.R;
 import com.example.binbuddy.databinding.FragmentScanBinding;
@@ -42,6 +43,7 @@ import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 
+@AndroidEntryPoint
 public class ScanFragment extends Fragment {
 
     private static final String TAG = "ScanFragment";

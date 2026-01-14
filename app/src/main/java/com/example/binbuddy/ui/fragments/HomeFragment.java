@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import dagger.hilt.android.AndroidEntryPoint;
 
 import com.example.binbuddy.R;
 import com.example.binbuddy.databinding.FragmentHomeBinding;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+@AndroidEntryPoint
 public class HomeFragment extends Fragment {
 
     private static final String TAG = "HomeFragment";

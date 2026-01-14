@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import dagger.hilt.android.AndroidEntryPoint;
 
 import com.example.binbuddy.R;
 import com.example.binbuddy.databinding.FragmentSearchBinding;
@@ -23,6 +24,7 @@ import com.example.binbuddy.ui.viewmodel.ProductSearchViewModel;
 
 import java.util.ArrayList;
 
+@AndroidEntryPoint
 public class SearchFragment extends Fragment {
 
     private FragmentSearchBinding binding;

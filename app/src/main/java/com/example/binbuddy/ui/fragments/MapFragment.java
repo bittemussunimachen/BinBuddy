@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import dagger.hilt.android.AndroidEntryPoint;
 
 import com.example.binbuddy.R;
 import com.example.binbuddy.databinding.FragmentMapBinding;
@@ -23,6 +24,7 @@ import com.example.binbuddy.ui.viewmodel.PfandInfoViewModel;
 
 import java.util.ArrayList;
 
+@AndroidEntryPoint
 public class MapFragment extends Fragment {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
