@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.binbuddy.R;
 import com.example.binbuddy.databinding.ActivityProductDetailBinding;
+import com.example.binbuddy.domain.model.EnvironmentInfo;
 import com.example.binbuddy.domain.model.PfandInfo;
 import com.example.binbuddy.domain.model.Product;
 import com.example.binbuddy.domain.model.WasteCategory;
@@ -21,6 +22,8 @@ import com.example.binbuddy.domain.service.WasteClassificationService;
 import com.example.binbuddy.ui.viewmodel.ProductDetailViewModel;
 import com.caverock.androidsvg.SVG;
 import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductDetailActivity extends AppCompatActivity {
 
@@ -117,6 +120,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         binding.tvIngredients.setText(formatList(product.getIngredients(), getString(R.string.no_product_data)));
 
         displayGreenScore(product);
+        displayEnvironment(product.getEnvironmentInfo());
 
         WasteCategory category = wasteClassificationService.determineWasteCategory(product);
         displayWasteCategory(category);
@@ -132,6 +136,14 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
         String grade = product.getEcoscoreGrade();
         Integer score = product.getEcoscoreScore();
+
+        // Fallback to environment info if direct fields are missing (e.g., when coming from search result)
+        if ((grade == null || grade.trim().isEmpty()) && product.getEnvironmentInfo() != null) {
+            grade = product.getEnvironmentInfo().getEcoScoreGrade();
+        }
+        if (score == null && product.getEnvironmentInfo() != null) {
+            score = product.getEnvironmentInfo().getEcoScoreScore();
+        }
 
         if (grade == null || grade.trim().isEmpty()) {
             binding.greenScoreRow.setVisibility(View.GONE);
@@ -156,6 +168,140 @@ public class ProductDetailActivity extends AppCompatActivity {
         } else {
             binding.ivGreenScore.setVisibility(View.GONE);
         }
+    }
+
+    private void displayEnvironment(EnvironmentInfo info) {
+        binding.cardEnvironment.setVisibility(View.VISIBLE);
+        clearEnvironmentRows();
+
+        if (info == null) {
+            showEnvironmentFallback(getString(R.string.environment_info_missing));
+            return;
+        }
+
+        boolean ecoVisible = bindEcoRow(info);
+        boolean packagingVisible = bindPackagingRow(info);
+        boolean palmVisible = bindPalmRow(info);
+        boolean carbonVisible = bindCarbonRow(info);
+
+        if (!ecoVisible && !packagingVisible && !palmVisible && !carbonVisible) {
+            showEnvironmentFallback(getString(R.string.environment_info_missing));
+        } else {
+            binding.tvEnvironmentFallback.setVisibility(View.GONE);
+        }
+    }
+
+    private void clearEnvironmentRows() {
+        binding.rowEcoScore.setVisibility(View.GONE);
+        binding.rowPackaging.setVisibility(View.GONE);
+        binding.rowPalmOil.setVisibility(View.GONE);
+        binding.rowCarbon.setVisibility(View.GONE);
+        binding.tvEnvironmentFallback.setVisibility(View.GONE);
+
+        binding.tvEcoScoreTitle.setText("");
+        binding.tvEcoScoreValue.setText("");
+        binding.tvPackagingTitle.setText("");
+        binding.tvPackagingValue.setText("");
+        binding.tvPalmTitle.setText("");
+        binding.tvPalmValue.setText("");
+        binding.tvCarbonTitle.setText("");
+        binding.tvCarbonValue.setText("");
+    }
+
+    private boolean bindEcoRow(EnvironmentInfo info) {
+        String grade = info.getEcoScoreGrade();
+        Integer score = info.getEcoScoreScore();
+        if (score != null && score < 0) {
+            score = null;
+        }
+        if ((grade == null || grade.trim().isEmpty()) && score == null) {
+            binding.rowEcoScore.setVisibility(View.GONE);
+            return false;
+        }
+
+        String normalizedGrade = grade != null ? grade.trim().toUpperCase(Locale.getDefault()) : "";
+        String description;
+        if (!normalizedGrade.isEmpty() && score != null) {
+            description = getString(R.string.environment_eco_score_value, normalizedGrade, score);
+        } else if (!normalizedGrade.isEmpty()) {
+            description = getString(R.string.environment_eco_score_grade_only, normalizedGrade);
+        } else {
+            description = getString(R.string.environment_eco_score_missing_short);
+        }
+
+        binding.rowEcoScore.setVisibility(View.VISIBLE);
+        binding.iconEcoScore.setImageResource(IconRegistry.getIconRes(IconRegistry.ICON_ECO_SCORE));
+        binding.tvEcoScoreTitle.setText(getString(R.string.environment_eco_score));
+        binding.tvEcoScoreValue.setText(description);
+        return true;
+    }
+
+    private boolean bindPackagingRow(EnvironmentInfo info) {
+        List<String> details = new ArrayList<>();
+        if (!info.getPackagingParts().isEmpty()) {
+            details.add(getString(R.string.environment_packaging_parts, TextUtils.join(", ", info.getPackagingParts())));
+        }
+        if (!info.getPackagingMaterials().isEmpty()) {
+            details.add(getString(R.string.environment_packaging_materials, TextUtils.join(", ", info.getPackagingMaterials())));
+        }
+        if (!TextUtils.isEmpty(info.getPackagingWarning())) {
+            details.add(getString(R.string.environment_packaging_warning_prefix, info.getPackagingWarning()));
+        }
+
+        if (details.isEmpty()) {
+            binding.rowPackaging.setVisibility(View.GONE);
+            return false;
+        }
+
+        binding.rowPackaging.setVisibility(View.VISIBLE);
+        binding.iconPackaging.setImageResource(IconRegistry.getIconRes(IconRegistry.ICON_PACKAGING));
+        binding.tvPackagingTitle.setText(getString(R.string.environment_packaging));
+        binding.tvPackagingValue.setText(TextUtils.join("\n", details));
+        return true;
+    }
+
+    private boolean bindPalmRow(EnvironmentInfo info) {
+        boolean hasPalm = info.isContainsPalmOil();
+        boolean hasThreat = !TextUtils.isEmpty(info.getThreatenedSpeciesIngredient());
+
+        if (!hasPalm && !hasThreat) {
+            binding.rowPalmOil.setVisibility(View.GONE);
+            return false;
+        }
+
+        List<String> descriptions = new ArrayList<>();
+        if (hasPalm) {
+            descriptions.add(getString(R.string.environment_palm_oil_present));
+        }
+        if (hasThreat) {
+            descriptions.add(getString(R.string.environment_threatened_species_value, info.getThreatenedSpeciesIngredient()));
+        }
+
+        binding.rowPalmOil.setVisibility(View.VISIBLE);
+        String iconKey = hasPalm ? IconRegistry.ICON_PALM_OIL : IconRegistry.ICON_WARNING;
+        binding.iconPalmOil.setImageResource(IconRegistry.getIconRes(iconKey));
+        binding.tvPalmTitle.setText(getString(R.string.environment_palm_oil_title));
+        binding.tvPalmValue.setText(TextUtils.join("\n", descriptions));
+        return true;
+    }
+
+    private boolean bindCarbonRow(EnvironmentInfo info) {
+        Double co2 = info.getCo2Per100g();
+        if (co2 == null) {
+            binding.rowCarbon.setVisibility(View.GONE);
+            return false;
+        }
+
+        binding.rowCarbon.setVisibility(View.VISIBLE);
+        binding.iconCarbon.setImageResource(IconRegistry.getIconRes(IconRegistry.ICON_CARBON));
+        binding.tvCarbonTitle.setText(getString(R.string.environment_carbon));
+        binding.tvCarbonValue.setText(getString(R.string.environment_carbon_value, co2));
+        return true;
+    }
+
+    private void showEnvironmentFallback(String message) {
+        binding.tvEnvironmentFallback.setVisibility(View.VISIBLE);
+        binding.tvEnvironmentFallback.setText(message);
     }
 
     private PictureDrawable loadGreenScoreDrawable(String grade) {

@@ -147,9 +147,16 @@ public class ProductDetailViewModel extends AndroidViewModel {
     private EnvironmentInfo parseEnvironmentInfo(org.json.JSONObject productJson) {
         EnvironmentInfo info = new EnvironmentInfo();
 
-        info.setEcoScoreGrade(productJson.optString("ecoscore_grade", null));
+        String ecoScoreGrade = productJson.optString("ecoscore_grade", null);
+        if (ecoScoreGrade != null && ecoScoreGrade.trim().isEmpty()) {
+            ecoScoreGrade = null;
+        }
+        info.setEcoScoreGrade(ecoScoreGrade);
         if (productJson.has("ecoscore_score")) {
-            info.setEcoScoreScore(productJson.optInt("ecoscore_score", -1));
+            int ecoScoreValue = productJson.optInt("ecoscore_score", -1);
+            if (ecoScoreValue >= 0) {
+                info.setEcoScoreScore(ecoScoreValue);
+            }
         }
 
         org.json.JSONObject ecoscoreData = productJson.optJSONObject("ecoscore_data");
