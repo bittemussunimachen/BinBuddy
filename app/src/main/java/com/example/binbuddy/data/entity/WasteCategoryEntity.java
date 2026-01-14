@@ -1,12 +1,16 @@
 package com.example.binbuddy.data.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.util.UUID;
+
 @Entity(tableName = "waste_categories")
 public class WasteCategoryEntity {
     @PrimaryKey
+    @NonNull
     @ColumnInfo(name = "id")
     public String id;
 
@@ -32,5 +36,6 @@ public class WasteCategoryEntity {
     public Integer sortOrder;
 
     public WasteCategoryEntity() {
+        this.id = UUID.randomUUID().toString();
     }
 }

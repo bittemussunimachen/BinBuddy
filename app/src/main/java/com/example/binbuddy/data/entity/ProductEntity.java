@@ -1,5 +1,6 @@
 package com.example.binbuddy.data.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Index;
@@ -14,6 +15,7 @@ import java.util.UUID;
 )
 public class ProductEntity {
     @PrimaryKey
+    @NonNull
     @ColumnInfo(name = "id")
     public String id;
 
