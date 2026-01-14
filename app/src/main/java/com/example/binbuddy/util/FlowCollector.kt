@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -25,6 +26,8 @@ class FlowCollector<T>(
                     onValue(value)
                 }
             } catch (e: Throwable) {
+                // Ignore coroutine cancellation; surface only real errors
+                if (e is CancellationException) return@launch
                 onError?.invoke(e)
             }
         }
