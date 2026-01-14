@@ -99,6 +99,9 @@ dependencies {
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.gson)
 
+    // Ensure compatible JavaPoet for Hilt processors
+    kapt(libs.javapoet)
+
     // Activity Result API
     implementation(libs.androidx.activity)
 
