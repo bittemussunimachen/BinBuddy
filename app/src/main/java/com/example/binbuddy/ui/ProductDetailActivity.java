@@ -131,9 +131,9 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void displayPfandInfo(PfandInfo info) {
-        if (info != null && info.isHasPfand()) {
+        if (info != null && info.hasPfand()) {
             binding.cardPfand.setVisibility(View.VISIBLE);
-            Double amount = info.getPfandAmount();
+            Double amount = info.getAmount();
             String pfandText = amount != null
                     ? getString(R.string.pfand_amount) + ": " + String.format(java.util.Locale.getDefault(), "€%.2f", amount)
                     : getString(R.string.pfand_info);

@@ -13,9 +13,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class ProductSearchViewModel extends AndroidViewModel {
     private final ExecutorService networkExecutor = Executors.newSingleThreadExecutor();
+    private final OkHttpClient httpClient = new OkHttpClient.Builder()
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(20, TimeUnit.SECONDS)
+            .callTimeout(25, TimeUnit.SECONDS)
+            .build();
     
     private final MutableLiveData<List<Product>> searchResults = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
@@ -68,36 +78,19 @@ public class ProductSearchViewModel extends AndroidViewModel {
             urlBuilder.append("&countries_tags_en=Germany");
         }
 
-        java.net.HttpURLConnection connection = null;
-        try {
-            java.net.URL url = new java.net.URL(urlBuilder.toString());
-            connection = (java.net.HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(8000);
-            connection.setReadTimeout(8000);
-            
-            int status = connection.getResponseCode();
-            StringBuilder builder = new StringBuilder();
-            java.io.InputStream rawStream = (status >= 200 && status < 300)
-                    ? connection.getInputStream()
-                    : connection.getErrorStream();
-            if (rawStream == null) {
-                rawStream = java.io.InputStream.nullInputStream();
+        Request request = new Request.Builder()
+                .url(urlBuilder.toString())
+                .get()
+                .header("Accept", "application/json")
+                .header("User-Agent", "BinBuddy/1.0 (Android)")
+                .build();
+
+        try (Response response = httpClient.newCall(request).execute()) {
+            String body = response.body() != null ? response.body().string() : "";
+            if (!response.isSuccessful()) {
+                throw new java.io.IOException("Search request failed: HTTP " + response.code());
             }
-            
-            try (java.io.InputStream stream = rawStream;
-                 java.io.BufferedReader reader = new java.io.BufferedReader(
-                         new java.io.InputStreamReader(stream, java.nio.charset.StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    builder.append(line);
-                }
-            }
-            return parseProducts(builder.toString(), germanyOnly);
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
+            return parseProducts(body, germanyOnly);
         }
     }
 
